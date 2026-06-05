@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Call Santa — POC</title>
+<style>
+  :root { --green:#2ecc71; --amber:#f1c40f; --red:#e74c3c; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center;
+    font-family: -apple-system, system-ui, Segoe UI, Roboto, sans-serif;
+    color: #f6f7fb;
+    background: radial-gradient(1200px 600px at 50% -10%, #1d2b4a 0%, #0c1124 55%, #070a16 100%);
+  }
+  .booth {
+    width: min(440px, 92vw); padding: 28px; border-radius: 22px;
+    background: linear-gradient(180deg, #b3121b, #8c0d14);
+    box-shadow: 0 30px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.12); text-align: center;
+  }
+  h1 { margin: 4px 0 2px; font-size: 26px; letter-spacing: .5px; }
+  .sub { margin: 0 0 16px; opacity: .8; font-size: 13px; }
+  .led-row { display:flex; gap:18px; justify-content:center; margin: 10px 0 18px; }
+  .led { display:flex; flex-direction:column; align-items:center; gap:6px; font-size:11px; opacity:.5; }
+  .led .dot { width:16px; height:16px; border-radius:50%; background:#3a3a3a; box-shadow: inset 0 0 4px rgba(0,0,0,.6); }
+  .led.on { opacity:1; }
+  .led.on .dot { box-shadow: 0 0 14px currentColor, inset 0 0 4px rgba(0,0,0,.4); }
+  .led.green.on .dot { background: var(--green); color: var(--green); }
+  .led.amber.on .dot { background: var(--amber); color: var(--amber); }
+  .led.red.on   .dot { background: var(--red);   color: var(--red); }
+
+  .status { font-size: 15px; min-height: 22px; margin-bottom: 6px; font-weight: 600; }
+  .timer { font-variant-numeric: tabular-nums; opacity:.8; font-size: 13px; margin-bottom: 16px; height: 16px; }
+
+  button {
+    appearance: none; border: 0; cursor: pointer; font-size: 17px; font-weight: 700;
+    padding: 15px 22px; border-radius: 14px; width: 100%; color: #fff;
+    transition: transform .06s ease, filter .15s ease;
+  }
+  button:active { transform: translateY(1px); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .pickup { background: linear-gradient(180deg,#2ecc71,#27a85d); }
+  .hangup { background: linear-gradient(180deg,#e74c3c,#c0392b); margin-top: 10px; }
+
+  .transcript {
+    margin-top: 18px; text-align: left; background: rgba(0,0,0,.28);
+    border-radius: 14px; padding: 12px 14px; height: 200px; overflow-y: auto;
+    font-size: 14px; line-height: 1.45; border: 1px solid rgba(255,255,255,.08);
+  }
+  .transcript:empty::before { content: "Pick up the handset and say hello…"; opacity:.45; }
+  .line { margin: 6px 0; }
+  .who { font-weight: 700; opacity: .85; }
+  .santa .who { color: #ffd86b; }
+  .child .who { color: #8ad4ff; }
+  .meta { font-size: 11px; opacity: .55; margin: 8px 2px 0; text-align:center; }
+  .voicepick { display:flex; align-items:center; gap:8px; justify-content:center; margin: 0 0 14px; font-size: 13px; opacity:.92; }
+  .voicepick select {
+    appearance:none; background:rgba(0,0,0,.3); color:#fff; border:1px solid rgba(255,255,255,.25);
+    border-radius:9px; padding:7px 30px 7px 12px; font-size:13px; font-weight:600; cursor:pointer;
+    background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%);
+    background-position: right 14px center, right 9px center; background-size: 5px 5px, 5px 5px; background-repeat:no-repeat;
+  }
+  .voicepick a { color:#ffd86b; }
+</style>
+</head>
+<body>
+  <div class="booth">
+    <h1>📞 Call Santa</h1>
+    <p class="sub">North Pole Direct Line — laptop POC</p>
+
+    <div class="led-row">
+      <div class="led amber on" id="led-idle"><span class="dot"></span>IDLE</div>
+      <div class="led green" id="led-active"><span class="dot"></span>ON CALL</div>
+      <div class="led red" id="led-ended"><span class="dot"></span>ENDED</div>
+    </div>
+
+    <div class="status" id="status">Ready when you are.</div>
+    <div class="timer" id="timer"></div>
+
+    <div class="voicepick">
+      <label for="voice">🎙️ Santa's voice:</label>
+      <select id="voice">
+        <option value="ash" selected>ash — deep, warm (default)</option>
+        <option value="ballad">ballad — rich, storytelling</option>
+        <option value="cedar">cedar — newest, natural</option>
+        <option value="verse">verse — expressive</option>
+        <option value="echo">echo — mellow</option>
+        <option value="marin">marin — bright</option>
+        <option value="sage">sage — calm</option>
+        <option value="coral">coral — friendly</option>
+        <option value="alloy">alloy — neutral</option>
+        <option value="shimmer">shimmer — light</option>
+      </select>
+    </div>
+
+    <button class="pickup" id="pickup">📞 Pick up the handset</button>
+    <button class="hangup" id="hangup" disabled>Hang up</button>
+
+    <div class="transcript" id="transcript"></div>
+    <div class="meta">Laptop mic &amp; speakers · max 5:00 · Santa wraps up &amp; hangs up himself · no audio saved<br>
+      Preview every voice at <a href="https://openai.fm" target="_blank" rel="noopener">openai.fm</a></div>
+  </div>
+
+<script>
+const MAX_SECONDS = 5 * 60;           // 5-minute hard cap from the PRD
+const WRAP_NUDGE_AT = MAX_SECONDS - 45;   // ~4:15 — nudge Santa to start his goodbye
+const SILENCE_CHECK_AT = 15;          // s of dead air before Santa checks "still there?"
+const SILENCE_HANGUP_AT = 28;         // s of dead air before Santa gives up & hangs up
+const REALTIME_CALLS_URL = "https://api.openai.com/v1/realtime/calls";
+
+let pc = null, dc = null, micStream = null, audioEl = null;
+let timerId = null, elapsed = 0;
+let childLine = null, santaLine = null;   // in-progress streaming transcript lines
+let hangingUp = null;                 // reason string once Santa calls end_call
+let lastVoiceAt = 0;                  // elapsed-seconds of last speech/response activity
+let silencePrompted = false;          // did we already nudge "are you still there?"
+
+const $ = (id) => document.getElementById(id);
+const statusEl = $("status"), timerEl = $("timer"), transcriptEl = $("transcript");
+
+function setLed(state) {  // 'idle' | 'active' | 'ended'
+  $("led-idle").classList.toggle("on", state === "idle");
+  $("led-active").classList.toggle("on", state === "active");
+  $("led-ended").classList.toggle("on", state === "ended");
+}
+function setStatus(t) { statusEl.textContent = t; }
+function fmt(s) { const m = Math.floor(s/60), x = s%60; return `${m}:${String(x).padStart(2,"0")}`; }
+
+function addLine(who, cls) {
+  const div = document.createElement("div");
+  div.className = "line " + cls;
+  div.innerHTML = `<span class="who">${who}:</span> <span class="txt"></span>`;
+  transcriptEl.appendChild(div);
+  transcriptEl.scrollTop = transcriptEl.scrollHeight;
+  return div.querySelector(".txt");
+}
+
+async function pickup() {
+  $("pickup").disabled = true;
+  setStatus("Dialing the North Pole…");
+  try {
+    // 1) get a short-lived ephemeral token from our local server (with chosen voice)
+    const chosenVoice = $("voice").value;
+    const r = await fetch("/token?voice=" + encodeURIComponent(chosenVoice));
+    const data = await r.json();
+    if (!r.ok || !data.value) throw new Error(data.detail || data.error || "Could not get session token");
+    const EPHEMERAL = data.value;
+
+    // 2) set up WebRTC: play Santa's audio, send our mic
+    pc = new RTCPeerConnection();
+    audioEl = new Audio();
+    audioEl.autoplay = true;
+    pc.ontrack = (e) => { audioEl.srcObject = e.streams[0]; };
+
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    micStream.getTracks().forEach((t) => pc.addTrack(t, micStream));
+
+    // 3) data channel for events (transcripts, etc.)
+    dc = pc.createDataChannel("oai-events");
+    dc.onmessage = onEvent;
+
+    // 4) SDP handshake with OpenAI
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    const sdpResp = await fetch(REALTIME_CALLS_URL, {
+      method: "POST",
+      body: offer.sdp,
+      headers: { Authorization: `Bearer ${EPHEMERAL}`, "Content-Type": "application/sdp" },
+    });
+    if (!sdpResp.ok) {
+      const body = await sdpResp.text();
+      console.error("Realtime /calls error:", sdpResp.status, body);
+      throw new Error(`Handshake ${sdpResp.status}: ${body.slice(0, 200)}`);
+    }
+    await pc.setRemoteDescription({ type: "answer", sdp: await sdpResp.text() });
+
+    pc.onconnectionstatechange = () => {
+      if (["failed", "disconnected", "closed"].includes(pc.connectionState)) endCall("Call dropped.");
+    };
+
+    // connected!
+    setLed("active");
+    setStatus("☎️ Connected — say hello to Santa!");
+    $("hangup").disabled = false;
+    $("voice").disabled = true;
+    startTimer();
+  } catch (err) {
+    console.error(err);
+    setStatus("⚠️ " + err.message);
+    setLed("idle");
+    cleanup();
+    $("pickup").disabled = false;
+  }
+}
+
+function onEvent(e) {
+  let msg;
+  try { msg = JSON.parse(e.data); } catch { return; }
+  switch (msg.type) {
+    // --- child's speech (input transcription) ---
+    case "conversation.item.input_audio_transcription.delta":
+      if (!childLine) childLine = addLine("You", "child");
+      childLine.textContent += msg.delta || "";
+      transcriptEl.scrollTop = transcriptEl.scrollHeight;
+      break;
+    case "conversation.item.input_audio_transcription.completed":
+      if (!childLine) childLine = addLine("You", "child");
+      if (msg.transcript) childLine.textContent = msg.transcript;
+      childLine = null;
+      break;
+    // --- Santa's speech (output transcript) ---
+    case "response.output_audio_transcript.delta":
+      if (!santaLine) santaLine = addLine("Santa", "santa");
+      santaLine.textContent += msg.delta || "";
+      transcriptEl.scrollTop = transcriptEl.scrollHeight;
+      break;
+    case "response.output_audio_transcript.done":
+      santaLine = null;
+      break;
+    case "input_audio_buffer.speech_started":
+      setStatus("🎙️ Listening…");
+      lastVoiceAt = elapsed; silencePrompted = false;   // child is here
+      break;
+    case "response.created":
+      if (!hangingUp) setStatus("🎅 Santa is talking…");
+      lastVoiceAt = elapsed;                              // Santa speaking = activity
+      break;
+
+    // --- Santa decided to hang up (end_call function call) ---
+    case "response.function_call_arguments.done":
+      if (msg.name === "end_call") {
+        let reason = "goodbye";
+        try { reason = (JSON.parse(msg.arguments || "{}").reason) || "goodbye"; } catch {}
+        hangingUp = reason;
+        setStatus("🎅 Santa is saying goodbye…");
+      }
+      break;
+    case "response.done":
+      // if Santa called end_call this turn, let his spoken goodbye finish, then close
+      if (hangingUp) {
+        const reason = hangingUp; hangingUp = null;
+        setTimeout(() => endCall(hangupMessage(reason)), 2600);
+      }
+      break;
+  }
+}
+
+function hangupMessage(reason) {
+  if (reason === "inappropriate") return "Santa said goodbye. 🎅";
+  if (reason === "no_response") return "No one was there — Santa hung up. 👋";
+  return "Santa wrapped up the call. 🎄";
+}
+
+// Inject a hidden system note to Santa and let him respond (used for time/silence nudges).
+function nudgeSanta(note) {
+  if (!dc || dc.readyState !== "open" || hangingUp) return;
+  dc.send(JSON.stringify({
+    type: "conversation.item.create",
+    item: { type: "message", role: "system",
+            content: [{ type: "input_text", text: note }] },
+  }));
+  dc.send(JSON.stringify({ type: "response.create" }));
+  lastVoiceAt = elapsed;
+}
+
+function startTimer() {
+  elapsed = 0; lastVoiceAt = 0; silencePrompted = false; hangingUp = null;
+  timerEl.textContent = `0:00 / ${fmt(MAX_SECONDS)}`;
+  timerId = setInterval(() => {
+    elapsed++;
+    timerEl.textContent = `${fmt(elapsed)} / ${fmt(MAX_SECONDS)}`;
+
+    // 1) graceful time-based wrap-up: nudge Santa to start his goodbye near the cap
+    if (elapsed === WRAP_NUDGE_AT && !hangingUp) {
+      nudgeSanta("(The call is almost out of time. Warmly begin your goodbye now: give your encouraging send-off, then end the call.)");
+    }
+
+    // 2) hard backstop if Santa hasn't already wrapped up
+    if (elapsed >= MAX_SECONDS) { endCall("Time's up — Santa has to go! 🎄"); return; }
+
+    // 3) silence handling — Santa carries the call even if the child goes quiet
+    if (!hangingUp) {
+      const quietFor = elapsed - lastVoiceAt;
+      if (!silencePrompted && quietFor === SILENCE_CHECK_AT) {
+        silencePrompted = true;
+        nudgeSanta("(The child has gone quiet for a little while. Warmly check if they're still there.)");
+      } else if (silencePrompted && quietFor >= SILENCE_HANGUP_AT) {
+        nudgeSanta("(Still no response from the child. Give a brief cheerful goodbye, then end the call with reason no_response.)");
+      }
+    }
+  }, 1000);
+}
+
+function cleanup() {
+  if (timerId) { clearInterval(timerId); timerId = null; }
+  if (dc) { try { dc.close(); } catch {} dc = null; }
+  if (pc) { try { pc.close(); } catch {} pc = null; }
+  if (micStream) { micStream.getTracks().forEach((t) => t.stop()); micStream = null; }
+  if (audioEl) { audioEl.srcObject = null; audioEl = null; }
+  childLine = santaLine = null;
+}
+
+function endCall(reason) {
+  cleanup();
+  setLed("ended");
+  setStatus(reason || "Call ended.");
+  $("hangup").disabled = true;
+  $("pickup").disabled = false;
+  $("voice").disabled = false;
+  $("pickup").textContent = "📞 Call again";
+  setTimeout(() => { if (!pc) { setLed("idle"); setStatus("Ready when you are."); timerEl.textContent = ""; } }, 4000);
+}
+
+$("pickup").addEventListener("click", pickup);
+$("hangup").addEventListener("click", () => endCall("You hung up. 👋"));
+setLed("idle");
+</script>
+</body>
+</html>
