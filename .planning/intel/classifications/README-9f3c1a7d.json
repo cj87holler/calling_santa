@@ -1,0 +1,32 @@
+{
+  "source_path": "/Users/cj.holler/Desktop/calling_santa/poc/README.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Call Santa — Laptop POC",
+  "summary": "Run-and-test guide for the zero-dependency laptop proof of concept that connects a browser mic to an OpenAI Realtime Santa voice agent.",
+  "scope": [
+    "laptop POC",
+    "server.py (Python stdlib local server)",
+    "index.html handset UI",
+    "OpenAI Realtime API",
+    "ephemeral session tokens",
+    "OPENAI_API_KEY handling",
+    "SANTA_INSTRUCTIONS persona string",
+    "env var tuning (SANTA_VOICE, SANTA_MODEL, PORT)",
+    "live transcript and LED states",
+    "5-minute call cap",
+    "vulgarity guardrail",
+    "latency feel",
+    "Realtime API per-minute cost",
+    "explicitly out of scope: phone booth, GPIO hook switch, scheduling/admin UI, PIN override, Grafana/Prometheus, weatherproofing, OFF-state recording"
+  ],
+  "cross_refs": [
+    "../call-santa-pre-prd.md",
+    "server.py",
+    "index.html"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": "README of an already-built POC: prose + runbook structure (setup steps, env vars, testing checklist) with no Decision/Consequences, user stories, or API contracts. Implementation facts it establishes (stdlib server holds the API key, browser receives only ~10-minute ephemeral tokens, default model gpt-realtime, default voice ash, mic works on localhost without HTTPS, 5-minute auto-wrap, persona in SANTA_INSTRUCTIONS) are as-built context, not forward-looking requirements. Mild SPEC signal from the file-role and env-var tables was resolved toward DOC because they document current behavior rather than binding contracts. References a PRD latency target of <2s p95 as a testing cue only — the authoritative statement lives in ../call-santa-pre-prd.md."
+}
