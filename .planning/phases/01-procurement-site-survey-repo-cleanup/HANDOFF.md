@@ -15,22 +15,33 @@ Planning is **done**. Verification was **in flight** when the session paused.
 | `01-VALIDATION.md` | ✓ complete | (committed) |
 | `01-CONTEXT.md` | ✓ complete — 25 locked decisions D-01..D-25 | `92c07c3` |
 | `*-PLAN.md` × 10 | ✓ complete — 5 waves | `d47ac48` |
-| Plan checker verdict | ⚠ **unknown** — agent was running when session paused | — |
+| Plan checker verdict | ✗ **never produced** — agent died when the machine slept, ~10 min in | — |
 
 Nothing is lost. The checker is advisory; re-running it costs minutes.
+
+**Confirmed:** the plan checker did **not** complete. It terminated on an API error when the
+computer went to sleep, having only read its input files. There is no verdict in scrollback —
+don't go looking for one.
 
 ---
 
 ## Resume options
 
-**If the checker's verdict appeared in scrollback before the session ended:**
-- `## VERIFICATION PASSED` → go straight to `/gsd:execute-phase 1`
-- `## ISSUES FOUND` → `/gsd:plan-phase 1 --skip-research` to re-enter the revision loop
+**Verification never ran, so pick one:**
 
-**If the verdict was lost:**
-- `/gsd:plan-phase 1 --skip-research` — reuses existing research/context/plans, re-runs verification only
-- Or accept the plans as-is and run `/gsd:execute-phase 1`. The planner self-reported all 10 plans
-  passing `frontmatter.validate` and `verify.plan-structure` with zero errors and zero warnings.
+- **`/gsd:plan-phase 1 --skip-research`** *(recommended)* — reuses the existing research, context
+  and plans, and re-runs verification only. This is the cheap path and it closes the one open loop.
+- **`/gsd:execute-phase 1`** — skip verification and go. Defensible: the planner self-reported all
+  10 plans passing `frontmatter.validate` and `verify.plan-structure` with zero errors and zero
+  warnings. But no independent agent has checked the plans against the phase goal, and there are
+  three specific things the checker was asked to scrutinise that nobody has yet confirmed:
+  1. whether the branch-aware `verify.sh` selector can be spoofed to skip evidence entirely
+  2. whether repo cleanup genuinely needs to be in wave 4, or could run earlier
+  3. whether any *other* negative assertion in `verify.sh` is self-invalidating, beyond the two
+     the planner already caught
+
+  Given this phase spends real money and the plans are the contract for that, running the checker
+  first is worth the minutes.
 
 ---
 
