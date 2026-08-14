@@ -75,7 +75,23 @@ after it.
      reason to keep it; the repo has exactly one authoritative implementation path.
   5. A hard spend ceiling with budget alerting is active on the OpenAI account, so no unattended run
      can produce a surprise bill.
-**Plans**: TBD
+**Plans**: 10 plans across 5 waves
+
+Plans:
+- [ ] 01-01-PLAN.md — Evidence tree, verify.sh assertion harness, root README, survey-protocol template (wave 1)
+- [ ] 01-02-PLAN.md — Credential inventory of the orphaned .env and Realtime pricing re-verification (wave 2)
+- [ ] 01-03-PLAN.md — Ethernet route scoping, install-spot marking, outlet inspection, branch selection (wave 2)
+- [ ] 01-04-PLAN.md — Pi-5-versus-laptop compute comparison and time-boxed owner decision (wave 2)
+- [ ] 01-05-PLAN.md — Enclosure, phone, post hardware and weatherproofing sundries procurement (wave 2)
+- [ ] 01-06-PLAN.md — OpenAI project-scoped hard spend ceiling, alerts, and browser-key revocation (wave 3)
+- [ ] 01-07-PLAN.md — Site-survey measurement, connectivity decision, and cabling or dongle order (wave 3)
+- [ ] 01-08-PLAN.md — Compute and electronics procurement against the plan 04 decision (wave 3)
+- [ ] 01-09-PLAN.md — Delete voice/, gated on the key revocation record (wave 4)
+- [ ] 01-10-PLAN.md — Budget reconciliation, phase gate run, STATE.md and ROADMAP closeout (wave 5)
+
+**Note on success criterion 1**: superseded by CONTEXT.md D-01. Plan 01 rewrites it during execution
+to the post-mounted outdoor cabinet form factor. Research verified the cited mahogany booth at
+$2,195, 200 lbs, and rated "For Indoor or Covered Use Only".
 
 ### Phase 2: Headless Session Core
 **Goal**: The complete Santa conversation — pick up, greeting, conversation, wrap-up, hang-up — runs
@@ -230,7 +246,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Procurement, Site Survey & Repo Cleanup | 0/TBD | Not started | - |
+| 1. Procurement, Site Survey & Repo Cleanup | 0/10 | Planned | - |
 | 2. Headless Session Core | 0/TBD | Not started | - |
 | 3. Physical Build & Hardware Integration | 0/TBD | Not started | - |
 | 4. Safety Guardrail & Verification | 0/TBD | Not started | - |
