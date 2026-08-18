@@ -863,32 +863,49 @@ evidence/
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+> **All six questions below were closed by `01-CONTEXT.md` during planning and are retained for provenance only.** Each carries a `RESOLVED` annotation naming the decision that closed it. Do not re-adopt a recommendation below as scope: where a CONTEXT decision contradicts the recommendation, the decision governs.
+
+| # | Question | Closed by |
+|---|----------|-----------|
+| Q1 | Enclosure option (CD-07) | **D-01** - post-mounted outdoor library-box cabinet; the mahogany booth is rejected |
+| Q2 | Hard spend limit figure (OPS-03) | **D-18** ($150/mo, enforcement on, alerts 50/75/90) and **D-20** (re-verify pricing first) |
+| Q3 | Survey device and timing | Plan 07 task 1 names the device and records the proxy caveat; the Phase 3 re-survey is carried forward |
+| Q4 | Wired `iperf3` host on the LAN | Plan 07 task 1 records the wired-or-not answer and forces the WAN-variance caveat when it is `no` |
+| Q5 | GFCI and in-use cover on the outdoor outlet | Plan 03 task 1 inspects it during the yard visit; remediation is deferred to the install phase |
+| Q6 | Spare 3.5 mm handset | **Deferred** by `01-CONTEXT.md` `<deferred>` - this resolution is *against* the recommendation below |
 
 1. **Which enclosure option? (CD-07)**
+   - **RESOLVED -** closed by **D-01**. The form factor is a post-mounted outdoor library-box style wooden cabinet (ASIN B0CPN4K6LP or equivalent). The mahogany walk-in booth is explicitly not ordered.
    - *What we know:* Mahogany walk-in booths are $2,195–$3,476 and indoor-rated. The $850–1,050 budget cannot accommodate one. Non-enclosure BOM is ~$433.
    - *What's unclear:* Whether the owner values the walk-in mahogany booth enough to spend ~$2,630, or would rather protect the budget and the schedule.
    - *Recommendation:* **`checkpoint:human-decision` as the first task in the procurement plan.** Present the three costed options verbatim. Do not let an agent choose. Record the answer as a locked decision in PROJECT.md and STATE.md before ordering.
 
 2. **What monthly dollar figure should the hard spend limit be set to? (OPS-03)**
+   - **RESOLVED -** closed by **D-18** ($150/month hard limit with enforcement enabled, alerts at 50/75/90, auto-recharge off) and **D-20** (re-verify Realtime pricing before entering the figure). Plan 02 produces `PRICING-RECHECK.md`; plan 06 configures the limit.
    - *What we know:* The mechanism (project-scoped hard limit with enforcement toggled on). Plausible season spend $180–1,080/month depending on traffic.
    - *What's unclear:* The owner's actual risk appetite. This is a values question, not a research question.
    - *Recommendation:* Second `checkpoint:human-decision`. Suggest a starting point of **$150/month** with alerts at 50/75/90% — high enough not to kill a busy December evening, low enough that the worst case is survivable, and adjustable upward from the dashboard in seconds if alerts start firing early. Frame it explicitly as "the amount you would be annoyed but not upset to lose."
 
 3. **What device runs the site survey, and when?**
+   - **RESOLVED -** plan 07 task 1 names the survey device and records whether it is the production Pi; if it is not, the proxy caveat and the mandatory Phase 3 re-survey are written into `survey-protocol.md`. Under the ethernet branch (D-06/D-07) the RF survey is skipped entirely.
    - *What we know:* macOS lacks `iw`/`wavemon`. The Pi is the ideal survey radio but has not been ordered.
    - *What's unclear:* Whether a Linux laptop is available, and whether the Pi can arrive inside the two-week window (PiShop/CanaKit show in stock, so probably yes).
    - *Recommendation:* Order the Pi on day 1 of the phase — it is in stock and cheap relative to the enclosure. Survey with whatever Linux device is available first to get an early read; add a mandatory **re-survey with the production Pi** task in Phase 3 before the enclosure is sealed.
 
 4. **Is there a wired host on the LAN to run `iperf3 -s`?**
+   - **RESOLVED -** plan 07 task 1 carries a mandatory `Server is WIRED to the router:` field; a `no` forces the fallback method and the WAN-variance caveat into the record rather than a silently worse number.
    - *What we know:* Measuring WiFi-to-WiFi produces meaningless throughput numbers.
    - *Recommendation:* Ask in the survey plan. If no wired host, fall back to a public iperf3 server and record the WAN-variance caveat in the log rather than silently reporting a worse number.
 
 5. **Does the front-yard outdoor outlet already have GFCI and an in-use cover?**
+   - **RESOLVED -** plan 03 task 1 inspects the outlet during the same yard visit and records GFCI and in-use-cover status; a missing item produces a `CARRY TO INSTALL PHASE` line. Remediation is deferred per `01-CONTEXT.md`.
    - *What we know:* NEC requires both for a wet-location outdoor receptacle; older homes frequently have neither.
    - *Recommendation:* Add a one-line inspection task to the site-survey visit — the person is already standing there. If missing, it is a ~$25 in-line GFCI + in-use cover purchase, not a project risk, but only if discovered in August rather than November.
 
 6. **Should a spare 3.5mm handset be bought alongside the rotary phone?**
+   - **RESOLVED AGAINST THIS RECOMMENDATION -** `01-CONTEXT.md` `<deferred>` defers the spare 3.5 mm handset; it is revisited only if the audio phase hits trouble. Plans 04, 05, 08 and 10 all explicitly exclude it. **Do not reintroduce it as a Phase 1 purchase on the strength of the recommendation below.**
    - *What we know:* The RJ9-to-3.5mm audio path is the one unproven link in the hardware chain, and it is discovered in Phase 3 — too late to reorder.
    - *Recommendation:* **Yes.** ~$30 to eliminate a schedule risk. Include it in the BOM and note the reason so it does not look like scope creep.
 
