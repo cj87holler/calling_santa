@@ -1,7 +1,11 @@
 # Phase 1 — Session Handoff
 
+> **RESOLVED 2026-08-18.** Verification ran and passed (0 blockers). All 7 round-2 warnings applied.
+> Phase 1 is planned and ready to execute: `/gsd:execute-phase 1`.
+> The rest of this file is retained as the record of what was decided and why.
+
 **Paused:** 2026-08-13, mid `/gsd:plan-phase 1`
-**Resume with:** `/clear`, then read this file
+**Resumed and closed:** 2026-08-18
 
 ---
 
