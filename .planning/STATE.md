@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: PROJECT.md, REQUIREMENTS.md, ROADMAP.md and STATE.md written from ingested docs
-last_updated: "2026-08-19T01:00:03.461Z"
-last_activity: 2026-08-19 -- Phase 1 planning complete
+last_updated: "2026-08-19T01:31:53.033Z"
+last_activity: 2026-08-19
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 10
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -22,16 +22,16 @@ See: .planning/PROJECT.md (updated 2026-08-11)
 
 **Core value:** A child picks up the handset and talks to a Santa who feels real — warm, fast, and
 never says anything a parent would object to.
-**Current focus:** Phase 1 — Procurement, Site Survey & Repo Cleanup
+**Current focus:** Phase 01 — procurement-site-survey-repo-cleanup
 
 ## Current Position
 
-Phase: 1 of 7 (Procurement, Site Survey & Repo Cleanup)
-Plan: 0 of TBD in current phase
+Phase: 01 (procurement-site-survey-repo-cleanup) — EXECUTING
+Plan: 2 of 10
 Status: Ready to execute
-Last activity: 2026-08-19 -- Phase 1 planning complete
+Last activity: 2026-08-19
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 10%
 
 **Hard deadline:** installation live in the front yard by ~2026-12-01 (~16 weeks).
 Phase 1 must complete by 2026-08-25 — a late enclosure order is the top risk to the season.
@@ -56,6 +56,7 @@ Phase 1 must complete by 2026-08-25 — a late enclosure order is the top risk t
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 01 P01 | 12 | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,11 @@ Open decisions carried forward: CD-02 (vulgarity mechanism, forced in Phase 4), 
 observability hosting, settled in Phase 6), CD-04a–e (connectivity, handset weatherproofing, attract
 music source, signage, PIN complexity), CD-06/CD-07 (final hardware purchases, forced in Phase 1),
 plus Pi transport choice — WebRTC vs WebSocket — forced in Phase 2.
+
+- [Phase 01]: Phase 1 gate (verify.sh) tests filled order values, never printed field labels — a blank order form cannot green the HW-01 gate over unspent money (T-1-40).
+- [Phase 01]: verify.sh distinguishes NOT-YET (a later wave deliberately falsifies this) from FAIL, so the gate is quiet during waves 1-3; --gate upgrades PENDING and NOT-YET to FAIL.
+- [Phase 01]: HW-06 gating is branch-aware: verify.sh reads evidence/site-survey/CONNECTIVITY-BRANCH (ethernet | wireless) to select the assertion set (D-06..D-09).
+- [Phase 01]: ROADMAP Phase 1 success criteria 1, 2 and 3 rewritten to match CONTEXT.md D-01 (post-mounted cabinet), D-07/D-10 (branch-neutral compute and cabling) and D-06/D-09 (three-outcome connectivity with a cited number).
 
 ### Pending Todos
 
@@ -116,6 +122,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-08-11
+Last session: 2026-08-19T01:31:35.352Z
 Stopped at: PROJECT.md, REQUIREMENTS.md, ROADMAP.md and STATE.md written from ingested docs
 Resume file: None

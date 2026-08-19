@@ -102,7 +102,7 @@ after it.
 Plans:
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — Evidence tree, verify.sh assertion harness, root README, survey-protocol template (wave 1)
+- [x] 01-01-PLAN.md — Evidence tree, verify.sh assertion harness, root README, survey-protocol template (wave 1)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 

@@ -50,7 +50,12 @@ patterns-established:
   - "Amendment record: every assertion verify.sh encodes beyond the original validation map is logged in 01-VALIDATION.md with an owner, a wave and a reason"
   - "Task ID convention P{plan}-T{n} used across the whole phase"
 
-requirements-completed: [OPS-01, HW-06]
+# Deliberately empty — see "Deviations from Plan" #4. This plan's `requirements: [OPS-01, HW-06]`
+# frontmatter records what it TOUCHES, not what it COMPLETES. HW-06 needs the physical measurement
+# from plans 03 and 07; OPS-01 needs plan 09's voice/ deletion. Plan 10 marks both complete after
+# `verify.sh --gate` exits 0.
+requirements-completed: []
+requirements-advanced: [OPS-01, HW-06]
 
 # Metrics
 duration: 12min
@@ -183,10 +188,30 @@ completed: 2026-08-18
   selector was exercised with `ethernet`, `wireless` and a bogus value during Task 1 verification.
 - **Committed in:** `8829475`
 
+**4. [Rule 1 - Bug] `requirements mark-complete` marked HW-06 and OPS-01 satisfied before the work that satisfies them ran**
+
+- **Found during:** State updates (post-Task 3)
+- **Issue:** This plan's frontmatter carries `requirements: [OPS-01, HW-06]`, and the state-update
+  step marks every listed ID complete. Running it checked both boxes in `REQUIREMENTS.md` and set
+  both traceability rows to `Complete`. Neither is true. HW-06 needs a physical measurement at the
+  install spot (plans 03 and 07, waves 2–3); OPS-01 needs the `voice/` deletion (plan 09, wave 4).
+  `verify.sh` reports those same requirements as `PENDING` and `NOT-YET` right now, so the repo would
+  have carried two directly contradictory claims — and a "Complete" requirement register is exactly
+  the "green over unmeasured work" defect (T-1-40, T-1-41) this plan exists to prevent.
+- **Fix:** Reverted both checkboxes to `[ ]` and set both traceability rows to `In Progress` with the
+  plan 01 contribution and the actually-completing plans named. The frontmatter IDs record what this
+  plan *touches*, not what it *completes*.
+- **Files modified:** `.planning/REQUIREMENTS.md`
+- **Verification:** `verify.sh` still reports HW-06 as `PENDING` and the three OPS-01 rows as
+  `NOT-YET`; `REQUIREMENTS.md` no longer contradicts the gate.
+- **Committed in:** final metadata commit
+- **Note for plan 10 (phase closeout):** mark HW-06 and OPS-01 complete there, after
+  `verify.sh --gate` exits 0. Do not mark them from an intermediate plan.
+
 ---
 
-**Total deviations:** 3 auto-fixed (2 × Rule 2, 1 × Rule 1)
-**Impact on plan:** All three protect the plan's own stated purpose — a gate that cannot green over
+**Total deviations:** 4 auto-fixed (2 × Rule 2, 2 × Rule 1)
+**Impact on plan:** All four protect the plan's own stated purpose — a gate that cannot green over
 unspent or unmeasured work. No scope creep; no new files beyond the plan's `files_modified` list.
 
 ## Issues Encountered
@@ -243,6 +268,13 @@ Notes for downstream plan authors:
 **Concern carried forward:** Phase 1 must complete by 2026-08-25. This plan consumed roughly 12
 minutes of that budget and unblocks four parallel wave-2 plans, three of which (03, 04, 05) are on
 the enclosure-lead-time critical path.
+
+## Self-Check: PASSED
+
+All 10 claimed files exist on disk and the 8 new/modified content files are tracked in git.
+`verify.sh` is committed with mode `100755`. All four commits (`e607420`, `b4dc356`, `8829475`,
+`ec9d81e`) are present in `git log`. `verify.sh` reports `passed=4 failed=0 pending=43 not-yet=3`
+(50 assertions total) and exits 0; `--gate` exits 1. No claimed artefact is missing.
 
 ---
 *Phase: 01-procurement-site-survey-repo-cleanup*

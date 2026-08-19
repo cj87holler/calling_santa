@@ -214,8 +214,8 @@ Deferred. Tracked, not in this roadmap.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | HW-01 | Phase 1 | Pending |
-| HW-06 | Phase 1 | Pending |
-| OPS-01 | Phase 1 | Pending |
+| HW-06 | Phase 1 | In Progress — plan 01 authored the branch-aware assertions and the wired-path note; satisfied by plans 03 and 07 |
+| OPS-01 | Phase 1 | In Progress — plan 01 authored the root README (documentation clause); satisfied by plan 09's `voice/` deletion |
 | OPS-03 | Phase 1 | Pending |
 | SESS-01 | Phase 2 | Pending |
 | SESS-02 | Phase 2 | Pending |
