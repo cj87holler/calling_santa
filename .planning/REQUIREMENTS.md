@@ -30,6 +30,10 @@ roadmapping are tagged `[added]` or `[revised]` with a reason.
 - [ ] **HW-06**: The connectivity path is chosen on the basis of a physical range test at the actual
   front-yard install location — home WiFi if signal holds, LTE dongle if it does not. *(PRD 3, 5.3;
   resolves CD-04a)*
+  - *Note (Phase 1): decisions D-06 through D-09 admit a wired ethernet run as a third outcome.
+    Under that branch the physical evidence required by this requirement is the measured cable run
+    at the marked install spot plus wired-path `mtr` and `iperf3` results, in place of an RF range
+    test. A decision without a cited number satisfies neither branch (D-09).*
 - [ ] **HW-07**: The booth is installed in the front yard, powered from an outdoor outlet through a
   weatherproof cord, and holds connectivity and power through a full scheduled day. *(PRD 3, 5.3)*
 

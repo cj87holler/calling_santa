@@ -67,15 +67,30 @@ after it.
 **Requirements**: HW-01, HW-06, OPS-01, OPS-03
 **Success Criteria** (what must be TRUE):
 
-  1. The booth enclosure and the phone are ordered, with order confirmations and delivery dates on
-     record — mahogany over MDF, full corded/rotary phone over a standalone handset (CD-06, CD-07
-     resolved by purchase).
+  1. A post-mounted outdoor library-box style wooden cabinet — reference Ilyapa 16" × 14" × 22",
+     ASIN B0CPN4K6LP, ~$150–230, or an equivalent solid-wood or weatherproof-composite cabinet that
+     is outdoor-rated, 4×4-post mountable and at least 15" × 13" × 20" interior-capable — and a full
+     corded/rotary phone are ordered, with order confirmations and delivery dates on record (CD-06,
+     CD-07 resolved by purchase). *(The original mahogany walk-in booth specification was superseded
+     by CONTEXT.md D-01 after research verified the cited booth at $2,195, 200 lbs, and rated "For
+     Indoor or Covered Use Only".)*
 
-  2. The Pi 5 (8GB), USB audio adapter, lever-arm microswitch, LEDs, weatherproof cord and sealant
-     are ordered and the total lands inside the ~$850–1,050 budget with no camera line item.
+  2. The compute path selected in `evidence/orders/COMPUTE-DECISION.md` — a Raspberry Pi 5, or the
+     existing laptop with its battery physically removed per D-12 — plus the USB audio adapters, the
+     lever-arm microswitch, the status LEDs, the sealants, and the connectivity hardware the selected
+     branch requires (a weatherproof extension cord under the wireless branch, or outdoor-rated /
+     direct-burial Cat6 plus PoE under the ethernet branch, where D-07 removes the cord from the BOM)
+     are ordered, and the total lands inside the ~$850–1,050 budget with no camera line item.
+     *(Superseded by CONTEXT.md D-07 and D-10: the compute path is not pre-committed, and the
+     weatherproof cord is conditional on the connectivity branch.)*
 
-  3. A physical signal-strength test has been run at the exact front-yard install spot, and the
-     connectivity path is chosen on that evidence — home WiFi or LTE dongle (CD-04a resolved).
+  3. The connectivity path is chosen on physical evidence gathered at the exact front-yard install
+     spot, and the decision cites the number that justifies it (D-09) — home WiFi, an LTE dongle, or
+     a wired ethernet run, whichever the evidence supports (CD-04a resolved). Under the wireless
+     branch that evidence is a signal-strength time series taken at the marked spot; under the
+     ethernet branch it is the measured cable run at the marked spot plus wired-path `mtr` and
+     `iperf3` results. *(Superseded by CONTEXT.md D-06 and D-09: wired ethernet is the preferred
+     path, so the original WiFi-or-LTE-only wording failed the preferred outcome.)*
 
   4. `voice/my-project/` is either deleted from the repo or documented in the README with a stated
      reason to keep it; the repo has exactly one authoritative implementation path.
@@ -110,9 +125,15 @@ Plans:
 
 - [ ] 01-10-PLAN.md — Budget reconciliation, phase gate run, STATE.md and ROADMAP closeout (wave 5)
 
-**Note on success criterion 1**: superseded by CONTEXT.md D-01. Plan 01 rewrites it during execution
-to the post-mounted outdoor cabinet form factor. Research verified the cited mahogany booth at
-$2,195, 200 lbs, and rated "For Indoor or Covered Use Only".
+**Note on success criteria 1, 2 and 3**: all three were superseded by CONTEXT.md decisions and were
+rewritten in place by plan 01 during execution. Criterion 1 by **D-01** — the enclosure is a
+post-mounted outdoor cabinet, not a mahogany walk-in booth, because research verified the cited booth
+at $2,195, 200 lbs, and rated "For Indoor or Covered Use Only". Criterion 2 by **D-07 and D-10** —
+the compute path is decided in plan 04 rather than pre-committed to a Pi 5, and the weatherproof
+extension cord leaves the BOM entirely under the ethernet-plus-PoE branch. Criterion 3 by **D-06 and
+D-09** — wired ethernet is the preferred connectivity path and is a third admissible outcome
+alongside WiFi and LTE, and any decision must cite the number that justifies it. Criteria 4 and 5 are
+unchanged.
 
 ### Phase 2: Headless Session Core
 
