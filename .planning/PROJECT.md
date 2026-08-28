@@ -99,8 +99,10 @@ spend ceiling is a Phase 1 item, not an afterthought.
   door latch against wind swing, powered from an outdoor outlet.
 - **Network**: Admin UI local-network only. PIN stored hashed on device. No internet-facing surface.
 - **Concurrency**: Exactly one session — single handset, single by construction.
-- **Budget**: ~$850–1,050 total hardware, camera line removed. Booth dominates ($600–800 mahogany;
-  $150–300 smaller Etsy props are the fallback).
+- **Budget**: ~$850–1,050 total hardware, camera line removed. Enclosure is a post-mounted outdoor
+  cabinet at ~$150–230 (D-01) — the mahogany walk-in booth the PRD assumed at $600–800 prices at
+  $2,195 and is rated indoor-only, and dropping it is what makes this budget achievable. Compute is
+  now the dominant line (~$240 for a Pi 5 8GB board-only; pending the plan 04 decision).
 - **Tech stack**: Raspberry Pi 5 (8GB), driverless USB audio adapter, normally-closed lever-arm
   microswitch on the cradle, OpenAI Realtime API. POC runtime is Python 3 stdlib only — keep the
   dependency footprint small enough to debug in a cold booth.
@@ -132,7 +134,7 @@ spend ceiling is a Phase 1 item, not an afterthought.
 | CD-04d | Signage and decoration | Phase 7 | Low. Affects whether children understand what the box is. |
 | CD-04e | PIN complexity and reset-if-forgotten | Phase 5 | Low. |
 | CD-06 | Final handset purchase — full rotary phone vs standalone handset | Phase 1 | Stated preference: full rotary phone (cradle and hook switch already built in). Must be ordered in Phase 1. |
-| CD-07 | Final enclosure purchase — vendor and material | Phase 1 | Stated preference: mahogany over MDF for outdoor durability. Longest lead time in the project; dominant budget line. |
+| CD-07 | Final enclosure purchase — vendor and material | Phase 1 | Resolved by **D-01**: post-mounted outdoor cabinet (solid wood or weatherproof composite), not the mahogany walk-in booth — that unit verified at $2,195, 200 lbs, indoor-rated. Still the longest lead time in the project. Awaiting purchase at plan 01-05's checkpoint. |
 | — | Pi Realtime transport: WebRTC vs WebSocket | Phase 2 | The POC's browser WebRTC path has no headless equivalent for free. Settle before writing the transport. |
 | — | `voice/my-project/` — delete or keep | Phase 1 | Undocumented 27-file Node/TypeScript codebase with a nested duplicate. Nothing references it. |
 

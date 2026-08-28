@@ -4,7 +4,7 @@
 
 Seven phases carry Call Santa from a laptop proof of concept to a working phone box in the front yard
 by the first week of December 2026. The shape is dictated by two forces. First, the season does not
-move — so the longest-lead item (a mahogany phone box) is ordered in Phase 1, in the first two weeks,
+move — so the longest-lead item (the outdoor enclosure) is ordered in Phase 1, in the first two weeks,
 before a single line of production code is written. Second, the POC does not port — the entire control
 loop lives in browser JavaScript, so Phase 2 is a substantial headless re-implementation on the Pi,
 not a deployment task.
@@ -325,7 +325,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Procurement, Site Survey & Repo Cleanup | 0/10 | Planned | - |
+| 1. Procurement, Site Survey & Repo Cleanup | 2/10 | In Progress — blocked at 4 human checkpoints | - |
 | 2. Headless Session Core | 0/TBD | Not started | - |
 | 3. Physical Build & Hardware Integration | 0/TBD | Not started | - |
 | 4. Safety Guardrail & Verification | 0/TBD | Not started | - |

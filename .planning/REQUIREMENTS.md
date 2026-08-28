@@ -15,9 +15,12 @@ roadmapping are tagged `[added]` or `[revised]` with a reason.
 
 ### Hardware & Enclosure (HW)
 
-- [ ] **HW-01**: Booth enclosure and phone hardware are ordered and received, with mahogany preferred
-  over MDF for outdoor durability and a full corded/rotary phone preferred over a standalone handset
-  (cradle and hook switch already built in). *(PRD 5.3, 11; resolves CD-06, CD-07)*
+- [ ] **HW-01**: Booth enclosure and phone hardware are ordered and received, with a post-mounted
+  outdoor cabinet in solid wood or weatherproof composite and a full corded/rotary phone preferred
+  over a standalone handset (cradle and hook switch already built in). *(PRD 5.3, 11; resolves
+  CD-06, CD-07)* *(The "mahogany preferred over MDF" wording was superseded by CONTEXT.md **D-01**
+  after research verified the cited mahogany booth at $2,195, 200 lbs, and rated "For Indoor or
+  Covered Use Only".)*
 - [ ] **HW-02**: A normally-closed lever-arm microswitch on the phone cradle reports off-hook and
   on-hook to a Pi GPIO pin reliably, with no bounce-induced false sessions. *(PRD 5.3, 5.4)*
 - [ ] **HW-03**: A driverless USB audio adapter carries handset mic input and handset speaker output
