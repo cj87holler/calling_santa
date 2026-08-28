@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: PROJECT.md, REQUIREMENTS.md, ROADMAP.md and STATE.md written from ingested docs
+stopped_at: "Phase 1 execution paused at 4 blocking human checkpoints: 01-03 yard survey, 01-04 compute decision, 01-05 long-lead orders, 01-06 OpenAI dashboard + key revocation"
 last_updated: "2026-08-28T02:25:26.892Z"
-last_activity: 2026-08-19
+last_activity: 2026-08-27 -- Phase 1 execution paused at 4 human gates
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 10
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -27,11 +27,26 @@ never says anything a parent would object to.
 ## Current Position
 
 Phase: 01 (procurement-site-survey-repo-cleanup) — EXECUTING
-Plan: 2 of 10
-Status: Ready to execute
-Last activity: 2026-08-19
+Plan: 2 of 10 complete (01-01, 01-02)
+Status: BLOCKED at 4 human checkpoints — no agent work remains until they clear
+Last activity: 2026-08-27
 
-Progress: [█░░░░░░░░░] 10%
+Progress: [██░░░░░░░░] 20%
+
+### Open checkpoints (all blocking, all human-only)
+
+| Plan | Type | Awaiting | Unblocks |
+|------|------|----------|----------|
+| 01-05 | human-action | Place enclosure / phone / site-hardware orders → reply "ordered" | 01-08, 01-10 |
+| 01-04 | decision | Select `pi-5` or `laptop` → reply with option | 01-07, 01-08 |
+| 01-03 | human-action | Yard visit: fill ETHERNET-SCOPING.md + set VERDICT → reply "scoped" | 01-07 |
+| 01-06 | human-action | OpenAI dashboard: limits, alerts, key revocation → reply "configured" | 01-09 (deletion gate), 01-10 |
+
+Resume with `/gsd:execute-phase 1` after answering; each checkpoint resumes via a fresh
+continuation agent that verifies prior commits first.
+
+**Critical path:** 01-05 (enclosure lead time) and 01-06 (revocation token gates plan 09's
+irreversible `rm -rf voice/`).
 
 **Hard deadline:** installation live in the front yard by ~2026-12-01 (~16 weeks).
 Phase 1 must complete by 2026-08-25 — a late enclosure order is the top risk to the season.
