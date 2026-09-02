@@ -4,7 +4,31 @@
 **Plan:** 01-05 (wave 2)
 **Requirement:** HW-01
 **Written:** 2026-08-18
-**Phase 1 must complete by:** 2026-08-25. The enclosure is the longest-lead item in the project.
+**Revised:** 2026-09-01 — reprioritized under D-26/D-27/D-28 (seasonal deployment; removable mount;
+enclosure deprioritized and custom build admitted).
+
+> **The original premise of this list no longer holds.** It was written around "the enclosure is the
+> longest-lead item in the project," which made it the schedule driver for all of Phase 1. Under
+> **D-28** the owner will build custom housing if no stock unit fits, so the enclosure is no longer on
+> the critical path. Under **D-27** the concrete footing — and the cure-time urgency that justified
+> ordering post hardware in Phase 1 at all — is gone entirely.
+
+## Order priority (D-28, owner direction 2026-09-01)
+
+Buy in this order. The first three are what the owner intends to build and work with; the enclosure
+and its mount follow whenever they settle.
+
+| # | Group | Why it leads | Blocked by |
+|---|-------|--------------|------------|
+| 1 | **Compute** — Pi 5 8GB board-only + PSU, cooler, 2× microSD, case | Locked at `DECISION: pi-5`; every Phase 2 task needs the board in hand | nothing — order now |
+| 2 | **Connectivity and power** — direct-burial Cat6, conduit, PoE+ injector/splitter | Phase 2 needs the Pi on the network; PoE removes the outdoor outlet from scope | 01-03 verdict + branch word |
+| 3 | **Phone** — full rotary body with intact cradle | Drives HW-02 hook-switch work and the enclosure's interior dimensions | nothing — order now |
+| 4 | Enclosure (purchased *or* custom stock) | No longer lead-time critical (D-28) | owner's build/buy call |
+| 5 | Removable mount + ballast (D-27) | Follows the enclosure it has to carry | enclosure choice |
+| 6 | Weatherproofing sundries and cable entry | Cheap, fast, needed by Phase 3 | nothing — order any time |
+
+**Note on ordering item 2:** the cable length and whether a PoE injector is needed both depend on the
+01-03 connectivity verdict. Do not order Cat6 before the branch word is set.
 
 ## How to use this list
 
@@ -27,6 +51,15 @@ Record each purchase in:
 ---
 
 ## Enclosure
+
+> **DEPRIORITIZED 2026-09-01 (D-28).** This section is retained as a *specification*, not a purchase
+> commitment. The owner may build custom housing instead. The Ilyapa ASIN below is no longer a
+> commitment and the four criteria are now design targets for whatever gets built or bought. The
+> outdoor-rating criterion softens under **D-26**: the box is outdoors roughly six weeks a year and
+> stored dry the rest, so "survives a wet December and repeated deploy/store cycles" replaces
+> "genuinely outdoor-rated year-round". Interior fit and the handset-lift clearance remain hard
+> requirements regardless of who builds it.
+
 
 **Decision reference:** D-01.
 
@@ -120,17 +153,28 @@ by CONTEXT.md**. Do not add it to this order. Revisit only if the audio phase hi
 
 ---
 
-## Post-mount hardware
+## Removable mount hardware
 
-**Decision reference:** D-02. Ordered **now**, in Phase 1, specifically so the concrete footing has
-cure time before the Phase 3 install window opens. Do not defer these to the install phase.
+> **SUPERSEDES the 4×4-post-in-concrete order (D-27, 2026-09-01).** The installation is seasonal
+> (D-26) and comes down each January, so nothing may be set in concrete. **The 4×4 pressure-treated
+> post, fast-setting concrete mix, post cap and post-mount brackets are all removed from this list.**
+> The cure-time urgency that made these a Phase 1 order line no longer exists — this hardware is no
+> longer schedule-critical and is bought alongside the enclosure, at priority 5.
+
+**Decision reference:** D-26, D-27.
 
 | Item | Spec qualifier | Notes |
 |------|----------------|-------|
-| 4x4 post, pressure-treated | Pressure-treated for ground contact; untreated wood rots at the soil line within a season | Length chosen so the cabinet sits at child height once the below-grade portion is buried |
-| Fast-setting concrete mix | Fast-setting, sized for **one** post hole | Fast-setting is the qualifier — standard mix extends the cure window this order exists to protect |
-| 4x4 post cap | Sized to the actual post (a nominal 4x4 measures about 3.5") | An open end grain on top of a post wicks water straight down the post |
-| Post-mount hardware / brackets | Must match the cabinet's own mounting provision | Confirm against the cabinet listing before ordering, not after it arrives |
+| Ground stake or driven spike | Long enough to resist overturning with a loaded box at child height — the ~35" stakes shipped with library-box kits are the reference class. Must withdraw by hand or with a jack, not require digging out | The whole point is that it comes back up in January |
+| Ballast base or planter base | Fillable with soil, stone or sand so weight sits low and centered; emptied for the off-season | Answers December wind load on a tall box without a concrete footing |
+| Bracing between stake and box | Triangular brackets or equivalent; stainless or galvanized fasteners | A stake alone flexes; the bracing is what makes it rigid |
+
+**Rejected:** a weighted freestanding base with no ground penetration. A cabinet at child height with
+a child pulling on a handset is a tip-over risk that ballast alone does not answer.
+
+**Still to confirm before buying at priority 5:** if the mount ships as part of an enclosure kit, the
+interior fit check and the handset-lift clearance are checked against *that* kit's box, not against
+the retired Ilyapa dimensions.
 
 ---
 
@@ -199,8 +243,8 @@ Against the D-14 reference math:
 
 | Group | Estimate |
 |-------|----------|
-| Enclosure | ~$150-230 (reference: ~$200) |
-| Post, concrete, post cap, brackets | ~$60-90 |
+| Enclosure — purchased *or* custom stock (D-28) | ~$150-230 purchased; custom TBD |
+| Removable mount: stake, ballast base, bracing (D-27) | ~$40-70 |
 | IP68 gland multi-pack | ~$10 |
 | Polyurethane + 100% silicone sealant | ~$20 |
 | Breather vent + silica gel desiccant | ~$15 |
@@ -211,6 +255,14 @@ Against the D-14 reference math:
 D-14's reference math is roughly $200 enclosure plus roughly $433 of non-enclosure BOM, or about
 $633 in total, leaving headroom inside the **$850-1,050 ceiling** once plan 08's compute lines and
 plan 07's connectivity lines land. This list stays comfortably inside that envelope.
+
+**Revised 2026-09-01.** Two lines moved under D-27/D-28: concrete and post hardware leave the list,
+and the enclosure line becomes indicative rather than committed since a custom build has no quoted
+price. Known-firm figures against the ceiling are now the **$239.75** compute path (locked at
+`DECISION: pi-5`) plus this list's sundries; the enclosure and the plan 07 connectivity lines
+(direct-burial Cat6, conduit, PoE+ injector) are the two open variables. A custom enclosure could
+land either side of $200 — plan 10's reconciliation is what settles it, and it reads actual prices
+paid, never these estimates.
 
 Plan 10 reconciles every actual price paid against this ceiling in `budget-actual.md`. That
 reconciliation reads the `Actual price paid (USD):` field out of the three order files, which is why
