@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Phase 1 execution paused at 4 blocking human checkpoints: 01-03 yard survey, 01-04 compute decision, 01-05 long-lead orders, 01-06 OpenAI dashboard + key revocation"
-last_updated: "2026-08-28T02:25:26.892Z"
-last_activity: 2026-08-27 -- Phase 1 execution paused at 4 human gates
+stopped_at: "Completed 01-04-PLAN.md (compute decision locked: DECISION pi-5); 3 checkpoints remain open: 01-03, 01-05, 01-06"
+last_updated: "2026-09-02T02:04:26.532Z"
+last_activity: 2026-09-02
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 10
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -27,20 +27,23 @@ never says anything a parent would object to.
 ## Current Position
 
 Phase: 01 (procurement-site-survey-repo-cleanup) — EXECUTING
-Plan: 2 of 10 complete (01-01, 01-02)
-Status: BLOCKED at 4 human checkpoints — no agent work remains until they clear
-Last activity: 2026-08-27
+Plan: 3 of 10 complete (01-01, 01-02, 01-04)
+Status: BLOCKED at 3 human checkpoints — no agent work remains until they clear
+Last activity: 2026-09-02
 
-Progress: [██░░░░░░░░] 20%
+Progress: [███░░░░░░░░] 30%
 
 ### Open checkpoints (all blocking, all human-only)
 
 | Plan | Type | Awaiting | Unblocks |
 |------|------|----------|----------|
 | 01-05 | human-action | Place enclosure / phone / site-hardware orders → reply "ordered" | 01-08, 01-10 |
-| 01-04 | decision | Select `pi-5` or `laptop` → reply with option | 01-07, 01-08 |
 | 01-03 | human-action | Yard visit: fill ETHERNET-SCOPING.md + set VERDICT → reply "scoped" | 01-07 |
 | 01-06 | human-action | OpenAI dashboard: limits, alerts, key revocation → reply "configured" | 01-09 (deletion gate), 01-10 |
+
+01-04 (compute decision) resolved 2026-09-01: `DECISION: pi-5`, 8GB board-only from pishop.us.
+`COMPUTE-DECISION.md` is now available for plan 07 (PoE splitter sizing) and plan 08 (electronics
+order).
 
 Resume with `/gsd:execute-phase 1` after answering; each checkpoint resumes via a fresh
 continuation agent that verifies prior commits first.
@@ -72,6 +75,7 @@ Phase 1 must complete by 2026-08-25 — a late enclosure order is the top risk t
 
 *Updated after each plan completion*
 | Phase 01 P01 | 12 | 3 tasks | 9 files |
+| Phase 01 P04 | 25min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -101,6 +105,7 @@ plus Pi transport choice — WebRTC vs WebSocket — forced in Phase 2.
 - [Phase 01]: verify.sh distinguishes NOT-YET (a later wave deliberately falsifies this) from FAIL, so the gate is quiet during waves 1-3; --gate upgrades PENDING and NOT-YET to FAIL.
 - [Phase 01]: HW-06 gating is branch-aware: verify.sh reads evidence/site-survey/CONNECTIVITY-BRANCH (ethernet | wireless) to select the assertion set (D-06..D-09).
 - [Phase 01]: ROADMAP Phase 1 success criteria 1, 2 and 3 rewritten to match CONTEXT.md D-01 (post-mounted cabinet), D-07/D-10 (branch-neutral compute and cabling) and D-06/D-09 (three-outcome connectivity with a cited number).
+- [Phase 01]: DECISION: pi-5 (8GB, board-only from pishop.us, configuration A1) locked as the installation compute; hook-switch input path is the GPIO header with a normally-closed lever-arm microswitch on a pull-up pin, pin assignment deferred to Phase 3
 
 ### Pending Todos
 
@@ -137,6 +142,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-08-19T01:31:35.352Z
-Stopped at: PROJECT.md, REQUIREMENTS.md, ROADMAP.md and STATE.md written from ingested docs
+Last session: 2026-09-02T02:04:26.525Z
+Stopped at: Completed 01-04-PLAN.md (compute decision locked: DECISION pi-5); 3 checkpoints remain open: 01-03, 01-05, 01-06
 Resume file: None

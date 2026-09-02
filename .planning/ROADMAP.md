@@ -108,7 +108,7 @@ Plans:
 
 - [x] 01-02-PLAN.md — Credential inventory of the orphaned .env and Realtime pricing re-verification (wave 2)
 - [ ] 01-03-PLAN.md — Ethernet route scoping, install-spot marking, outlet inspection, branch selection (wave 2)
-- [ ] 01-04-PLAN.md — Pi-5-versus-laptop compute comparison and time-boxed owner decision (wave 2)
+- [x] 01-04-PLAN.md — Pi-5-versus-laptop compute comparison and time-boxed owner decision (wave 2)
 - [ ] 01-05-PLAN.md — Enclosure, phone, post hardware and weatherproofing sundries procurement (wave 2)
 
 **Wave 3** *(blocked on Wave 2 completion)*
