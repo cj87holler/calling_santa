@@ -123,6 +123,38 @@ ROADMAP.md success criterion 1 should be read as superseded by D-01.
   authoritative implementation path" clause cannot be satisfied without it. It must name
   `poc/` as the authoritative path and must not embed any key.
 
+### Seasonal deployment (revises D-01, D-02 — owner decision 2026-09-01)
+
+- **D-26 —** The installation is **seasonal, not permanent**. The box, its mount and the
+  network cable all come down each January and are stored dry for roughly ten months.
+  This reverses the permanence assumption that D-01 and D-02 were both written against.
+  Consequences: the cabinet's duty cycle is ~6 weeks/year outdoors rather than 52, so the
+  "genuinely outdoor-rated" gate in D-01 softens to "survives a wet December and many
+  deploy/store cycles"; and the footing must be removable, which D-02 forbids by
+  construction. Storage space for the assembled box is now an owner obligation, not a
+  purchase line.
+- **D-27 —** The mount is a **removable ground stake or driven spike with a ballasted base**,
+  **superseding D-02 entirely**. The 4×4 pressure-treated post, fast-setting concrete, post
+  cap and post brackets all leave the bill of materials. Rationale: a post set in concrete
+  cannot be pulled each January. **The cure-time urgency that justified ordering D-02
+  hardware in Phase 1 dissolves with it** — this hardware is no longer schedule-critical and
+  may be bought alongside the enclosure whenever that settles. A weighted freestanding base
+  with no ground penetration was considered and rejected: a cabinet at child height with a
+  child pulling on a handset is a tip-over risk that ballast alone does not answer.
+- **D-28 —** The enclosure is **deprioritized and a custom build is admitted**, superseding
+  D-01's commitment to a specific purchased cabinet. The owner will build or adapt housing if
+  no stock unit fits. **This removes the enclosure from the critical path** — the premise that
+  "the enclosure is the longest-lead item in the project" no longer holds, and Phase 1's
+  ordering urgency transfers to compute, connectivity and the phone. D-01's interior fit
+  qualifier (≥15" × 13" × 20") is retained as a *design target for whatever gets built*, not
+  as a purchase gate. The Ilyapa ASIN B0CPN4K6LP is no longer a commitment.
+  - *Evaluated and not selected:* Wonderjune `B0DK6PZ123` (16.7 × 13 × 11" exterior) fails on
+    depth — roughly 9.5" interior against a 9" phone body leaves no room for the gland or a
+    cable service loop. Wonderjune `B0GSSQVJD7` (21 × 14.5 × 12.8" exterior, 35.4" ground
+    spike, ballastable planter base) fits on all three axes with margin and remains a viable
+    purchase option **if** its shelf is confirmed removable — a fixed mid-height shelf makes
+    lifting the handset off the cradle physically impossible.
+
 </decisions>
 
 <canonical_refs>
