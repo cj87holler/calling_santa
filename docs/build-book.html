@@ -1,0 +1,781 @@
+<title>Call Santa Build Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+  :root{
+    --paper:#F1F2F4;
+    --surface:#FFFFFF;
+    --surface-2:#E8EAED;
+    --ink:#14171A;
+    --ink-2:#4A5058;
+    --ink-3:#767D86;
+    --rule:#D2D6DB;
+    --rule-strong:#B4BAC2;
+    --kiosk:#A81A16;
+    --kiosk-soft:#F7E7E5;
+    --moss:#2F5D50;
+    --moss-soft:#E2EBE7;
+    --brass:#8A6A2F;
+    --brass-soft:#F3ECDD;
+    --display:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+    --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0E1013;
+      --surface:#181B20;
+      --surface-2:#22262C;
+      --ink:#E9EBEE;
+      --ink-2:#A8AEB7;
+      --ink-3:#79808A;
+      --rule:#2C3138;
+      --rule-strong:#3D444D;
+      --kiosk:#EC5B4F;
+      --kiosk-soft:#2E1614;
+      --moss:#6FBBA1;
+      --moss-soft:#14231E;
+      --brass:#C79E52;
+      --brass-soft:#262216;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E1013;
+    --surface:#181B20;
+    --surface-2:#22262C;
+    --ink:#E9EBEE;
+    --ink-2:#A8AEB7;
+    --ink-3:#79808A;
+    --rule:#2C3138;
+    --rule-strong:#3D444D;
+    --kiosk:#EC5B4F;
+    --kiosk-soft:#2E1614;
+    --moss:#6FBBA1;
+    --moss-soft:#14231E;
+    --brass:#C79E52;
+    --brass-soft:#262216;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px 96px}
+  p{margin:0 0 1em;max-width:68ch}
+  a{color:var(--kiosk);text-underline-offset:3px}
+  :focus-visible{outline:2px solid var(--kiosk);outline-offset:3px}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- masthead ---------- */
+  .mast{
+    border-bottom:3px solid var(--ink);
+    padding:52px 0 22px;
+    margin-bottom:8px;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--kiosk);
+    margin:0 0 18px;
+  }
+  h1{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(38px,7vw,64px);
+    line-height:1.02;
+    letter-spacing:-.025em;
+    margin:0 0 16px;
+    text-wrap:balance;
+  }
+  .standfirst{
+    font-size:clamp(18px,2.4vw,21px);
+    line-height:1.5;
+    color:var(--ink-2);
+    max-width:60ch;
+    margin:0;
+  }
+
+  /* ---------- status strip ---------- */
+  .status{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+    border:1px solid var(--rule);
+    border-radius:3px;
+    background:var(--surface);
+    margin:0 0 56px;
+    overflow:hidden;
+  }
+  .status div{
+    padding:16px 18px;
+    border-right:1px solid var(--rule);
+  }
+  .status div:last-child{border-right:0}
+  .status dt{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    margin:0 0 6px;
+  }
+  .status dd{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:22px;
+    margin:0;
+    letter-spacing:-.01em;
+    font-variant-numeric:tabular-nums;
+  }
+  .status .late{color:var(--kiosk)}
+
+  /* ---------- sections ---------- */
+  section{margin:0 0 64px}
+  h2{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(24px,3.4vw,31px);
+    letter-spacing:-.02em;
+    line-height:1.15;
+    margin:0 0 6px;
+    text-wrap:balance;
+  }
+  .sec-head{
+    border-top:2px solid var(--ink);
+    padding-top:14px;
+    margin-bottom:26px;
+  }
+  .sec-head .num{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:.12em;
+    color:var(--ink-3);
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:10px;
+  }
+  .sec-head p{color:var(--ink-2);margin:8px 0 0;font-size:16.5px}
+  h3{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:19px;
+    letter-spacing:-.01em;
+    margin:34px 0 10px;
+  }
+
+  /* ---------- decision cards ---------- */
+  .decks{display:flex;flex-direction:column;gap:14px}
+  .deck{
+    background:var(--surface);
+    border:1px solid var(--rule);
+    border-left:4px solid var(--kiosk);
+    border-radius:3px;
+    padding:20px 22px;
+  }
+  .deck.later{border-left-color:var(--rule-strong)}
+  .deck.closed{border-left-color:var(--moss);background:var(--surface)}
+  .deck.closed .deck-id{color:var(--moss);background:var(--moss-soft)}
+  .deck-done{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--moss);white-space:nowrap}
+  .deck-top{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:8px;
+  }
+  .deck-id{
+    font-family:var(--mono);
+    font-size:11.5px;
+    font-weight:500;
+    letter-spacing:.06em;
+    color:var(--kiosk);
+    background:var(--kiosk-soft);
+    padding:3px 7px;
+    border-radius:2px;
+  }
+  .deck.later .deck-id{color:var(--ink-2);background:var(--surface-2)}
+  .deck-q{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:18px;
+    letter-spacing:-.01em;
+    flex:1;
+    min-width:220px;
+  }
+  .deck p{font-size:16px;margin:0 0 10px;color:var(--ink-2);max-width:70ch}
+  .deck p:last-child{margin-bottom:0}
+  .deck strong{color:var(--ink);font-weight:600}
+  .rec{
+    font-family:var(--mono);
+    font-size:13.5px;
+    line-height:1.5;
+    background:var(--moss-soft);
+    color:var(--ink);
+    border-radius:2px;
+    padding:10px 12px;
+    margin:12px 0 0;
+    display:block;
+  }
+  .rec b{color:var(--moss);font-weight:500}
+  .blocks{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--ink-3);
+    letter-spacing:.03em;
+    margin-top:12px;
+    padding-top:10px;
+    border-top:1px dotted var(--rule-strong);
+  }
+
+  /* ---------- figures ---------- */
+  figure{margin:28px 0;padding:0}
+  .figbox{
+    background:var(--surface);
+    border:1px solid var(--rule);
+    border-radius:3px;
+    padding:24px 20px 18px;
+    overflow-x:auto;
+  }
+  figure svg{display:block;width:100%;min-width:520px;height:auto;color:var(--ink)}
+  figcaption{
+    font-size:14.5px;
+    line-height:1.5;
+    color:var(--ink-2);
+    margin-top:12px;
+    max-width:66ch;
+  }
+  figcaption b{color:var(--ink);font-weight:600}
+
+  /* svg type */
+  .s-box{fill:var(--surface-2);stroke:var(--rule-strong);stroke-width:1.5}
+  .s-box-hi{fill:var(--kiosk-soft);stroke:var(--kiosk);stroke-width:1.75}
+  .s-t{font-family:'Archivo',sans-serif;font-size:13px;font-weight:600;fill:var(--ink)}
+  .s-s{font-family:'IBM Plex Mono',monospace;font-size:10.5px;fill:var(--ink-3)}
+  .s-l{font-family:'IBM Plex Mono',monospace;font-size:11px;fill:var(--ink-2)}
+  .s-l-hi{font-family:'IBM Plex Mono',monospace;font-size:11px;fill:var(--kiosk);font-weight:500}
+  .s-line{stroke:var(--ink-2);stroke-width:1.5;fill:none}
+  .s-line-hi{stroke:var(--kiosk);stroke-width:2;fill:none}
+  .s-dash{stroke:var(--rule-strong);stroke-width:1.5;stroke-dasharray:5 4;fill:none}
+
+  /* ---------- tables ---------- */
+  .tw{overflow-x:auto;margin:22px 0;border:1px solid var(--rule);border-radius:3px;background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-size:15px;min-width:480px}
+  th{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:11.5px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    text-align:left;
+    color:var(--ink-3);
+    padding:12px 16px;
+    border-bottom:1.5px solid var(--rule-strong);
+    white-space:nowrap;
+  }
+  td{padding:11px 16px;border-bottom:1px solid var(--rule);vertical-align:top}
+  tbody tr:last-child td{border-bottom:0}
+  td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  code,.m{font-family:var(--mono);font-size:.88em;background:var(--surface-2);padding:1.5px 5px;border-radius:2px}
+
+  /* ---------- timeline ---------- */
+  .tl{list-style:none;margin:22px 0 0;padding:0;border-left:2px solid var(--rule-strong)}
+  .tl li{position:relative;padding:0 0 24px 26px}
+  .tl li::before{
+    content:"";position:absolute;left:-7px;top:5px;
+    width:12px;height:12px;border-radius:50%;
+    background:var(--surface);border:2px solid var(--rule-strong);
+  }
+  .tl li.done::before{background:var(--moss);border-color:var(--moss)}
+  .tl li.now::before{background:var(--kiosk);border-color:var(--kiosk);box-shadow:0 0 0 4px var(--kiosk-soft)}
+  .tl-top{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline}
+  .tl-name{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.01em}
+  .tl-date{font-family:var(--mono);font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .tl p{font-size:15.5px;color:var(--ink-2);margin:5px 0 0;max-width:64ch}
+  .chip{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;
+    padding:2.5px 7px;border-radius:2px;background:var(--surface-2);color:var(--ink-2);
+  }
+  .chip.red{background:var(--kiosk-soft);color:var(--kiosk)}
+  .chip.moss{background:var(--moss-soft);color:var(--moss)}
+
+  /* ---------- callout ---------- */
+  .note{
+    background:var(--surface);
+    border:1px solid var(--rule);
+    border-top:3px solid var(--brass);
+    border-radius:3px;
+    padding:18px 22px;
+    margin:24px 0;
+  }
+  .note h4{
+    font-family:var(--display);font-weight:600;font-size:15px;
+    margin:0 0 8px;letter-spacing:-.005em;
+  }
+  .note p{font-size:15.5px;margin:0 0 .7em;color:var(--ink-2)}
+  .note p:last-child{margin:0}
+  .note strong{color:var(--ink)}
+
+  ul.plain{margin:0 0 1em;padding-left:1.15em}
+  ul.plain li{margin-bottom:.45em;color:var(--ink-2);max-width:66ch}
+  ul.plain li strong{color:var(--ink);font-weight:600}
+
+  footer{
+    border-top:2px solid var(--ink);
+    padding-top:18px;margin-top:12px;
+    font-family:var(--mono);font-size:12.5px;color:var(--ink-3);line-height:1.7;
+  }
+  @media (max-width:620px){
+    body{font-size:16px}
+    .wrap{padding:0 18px 64px}
+    .status div{border-right:0;border-bottom:1px solid var(--rule)}
+    .status div:last-child{border-bottom:0}
+  }
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">Front-yard installation · v1 · Christmas 2026</p>
+  <h1>Call Santa</h1>
+  <p class="standfirst">A child lifts a rotary handset in a red box on a post and talks to Santa in real time. No screen, no adult, no setup. It has to be standing in the yard and working by the first week of December.</p>
+</header>
+
+<dl class="status">
+  <div><dt>Today</dt><dd>Sep 1</dd></div>
+  <div><dt>Install by</dt><dd>Dec 1</dd></div>
+  <div><dt>Weeks left</dt><dd>13</dd></div>
+  <div><dt>Phase</dt><dd class="late">1 of 7</dd></div>
+  <div><dt>Phase 1 due</dt><dd class="late">−7 days</dd></div>
+  <div><dt>Gates open</dt><dd class="late">3 of 4</dd></div>
+</dl>
+
+<!-- ============ DECISIONS ============ -->
+<section id="decisions">
+  <div class="sec-head">
+    <span class="num">Section 01 — open decisions</span>
+    <h2>What is waiting on you</h2>
+    <p>The compute question closed on 1 September. Three remain, and nothing else in the project moves until they are answered — every one is human-only work: a browser, a credit card, or a walk into the yard.</p>
+  </div>
+
+  <div class="decks">
+
+    <article class="deck closed">
+      <div class="deck-top">
+        <span class="deck-id">D-10 · plan 01-04</span>
+        <span class="deck-q">Compute — settled</span>
+        <span class="deck-done">✓ closed 1 Sep</span>
+      </div>
+      <p><strong>Raspberry Pi 5, 8GB, board-only from pishop.us — $239.75 all-in.</strong> Board $175.00 (SC1112), official 27W PD supply $12.95, Active Cooler $10.95, two microSD cards $29.90, case $10.95. Committed at <span class="m">ffba297</span>.</p>
+      <p>The $65 memory lever was priced and deliberately not pulled: CD-03 is still open and one of its outcomes puts Grafana on this same board. The second SD card is a required line, not a spare — a corrupted card in late November with no spare is a season-ending event.</p>
+      <span class="rec"><b>What this bought ▸</b> the hook switch is now free — GPIO header, normally-closed lever-arm microswitch on an internal pull-up, <b>$0.00</b> of added hardware and no second device in the system. The laptop path needed a Pico H plus a cable plus USB serial firmware. The three HW-04 status LEDs come off the same 40-pin header.</span>
+      <p class="blocks">Unblocked 01-07 (can now size the PoE splitter) and 01-08 (has an orderable list)</p>
+    </article>
+
+    <article class="deck">
+      <div class="deck-top">
+        <span class="deck-id">OPS-03 · plan 01-06</span>
+        <span class="deck-q">Set the OpenAI spend ceiling and revoke the old key</span>
+      </div>
+      <p>Roughly 20 minutes at <span class="m">platform.openai.com</span>. Create a <span class="m">call-santa-prod</span> project, set a <strong>$150 hard limit with the enforce toggle actually ON</strong> — a dollar figure with the toggle off is an alert, not a cap, and that is the usual way this gets marked done while protecting nothing — then a $175 org limit above it, alerts at $75 / $112.50 / $135, and confirm auto-recharge is off.</p>
+      <p>Then revoke the <span class="m">VITE_OPENAI_API_KEY</span> in <span class="m">voice/my-project/.env</span>. That key was written to be inlined into a browser bundle, so it is compromised by design regardless of where it was deployed. Its revocation is the gate on deleting <span class="m">voice/</span> — an irreversible step that must not run while a live key exists.</p>
+      <span class="rec"><b>Before you type $150 ▸</b> at <span style="font-family:inherit">gpt-realtime-2.1</span> that is ~312 four-minute calls, about <b>10 calls/day</b>. The mini model buys ~937, about <b>30/day</b>. At a busy 30/day the full model exhausts the cap around <b>December 10</b> — and OpenAI monthly limits do not reset until January 1, after the season is over.</span>
+      <p class="blocks">Blocks 01-09, 01-10 · answer with <span class="m">configured</span></p>
+    </article>
+
+    <article class="deck">
+      <div class="deck-top">
+        <span class="deck-id">CD-06 / CD-07 · plan 01-05</span>
+        <span class="deck-q">Place the long-lead orders</span>
+      </div>
+      <p><strong>Reprioritized 1 September.</strong> This was the critical path on the premise that the enclosure had the longest lead time in the project. It no longer is — the owner will build custom housing if no stock unit fits (D-28), and the concrete footing is gone entirely (D-27), taking its cure-time urgency with it. <strong>Order compute first, then connectivity and power, then the phone.</strong> The enclosure and its mount follow whenever they settle.</p>
+      <p>Buy against the spec qualifiers, not the product titles: enclosure <span class="m">B0CPN4K6LP</span> (~$150–230, must be solid wood or weatherproof composite, interior ≥ 15×13×20", outdoor-rated in the vendor's own words, 4×4-post mountable), rotary phone <span class="m">B00A8BOTWQ</span> (~$70, full body with intact cradle — not a bare handset), plus post, fast-setting concrete, IP68 glands, both sealants, breather vent and desiccant.</p>
+      <span class="rec"><b>Two spec traps on the connectivity order ▸</b> Cat6 must be <b>solid bare copper, not CCA</b> — copper-clad aluminium's voltage drop across a ~150 ft PoE run browns out the board under load. And PoE must be <b>802.3at (30W)</b> with a 5V/5A USB-C PD splitter; the Pi 5 needs 27W and 802.3af tops out at 15.4W. Both failures present in December as random mid-call audio dropouts.</span>
+      <p class="blocks">Blocks 01-08, 01-10 · answer with <span class="m">ordered</span></p>
+    </article>
+
+    <article class="deck">
+      <div class="deck-top">
+        <span class="deck-id">CD-04a · plan 01-03</span>
+        <span class="deck-q">Ethernet or wireless — the yard visit</span>
+      </div>
+      <p><strong>Walked on 1 September; the form is still blank.</strong> Owner-reported and not yet recorded as evidence: ~150 ft total run, exit through the <strong>existing AT&amp;T fiber penetration</strong> so no new hole in brick, surface conduit rather than burial which <strong>avoids the 811 locate</strong> under the form's own rule. That trends <span class="m">FEASIBLE</span> on all three criteria. Still missing: the spot marker and landmark reference, the outlet inspection, the sealing method, and a measured rather than estimated run length.</p>
+      <p><strong>FEASIBLE requires all three:</strong> a measured run ≤ 300 ft, a sealable exit point with a named method, and no trenching under a driveway or 811 locate you won't actually schedule. A run that is technically possible only via a route you don't want to cut is still <strong>not feasible</strong> — a technical yes that never gets executed sends the build down the wrong branch and takes the bill of materials with it.</p>
+      <span class="rec"><b>What it changes ▸</b> ethernet lets Phase 1 skip three RF survey windows and swaps the extension cord for direct-burial Cat6 and PoE — one cable carrying both power and network. Wireless keeps the cord and adds the full survey.</span>
+      <p class="blocks">Blocks 01-07 · answer with <span class="m">scoped</span></p>
+    </article>
+
+  </div>
+
+  <h3>Decided later — no action now</h3>
+  <p>Recorded so they don't get silently invented by whoever writes the code first.</p>
+
+  <div class="decks">
+    <article class="deck later">
+      <div class="deck-top"><span class="deck-id">Phase 2</span><span class="deck-q">Realtime transport: WebRTC or WebSocket</span></div>
+      <p>The proof of concept used the browser's <span class="m">RTCPeerConnection</span>, which has no free headless equivalent. Settle it before writing the transport layer, not during.</p>
+    </article>
+    <article class="deck later">
+      <div class="deck-top"><span class="deck-id">CD-04b · Phase 3</span><span class="deck-q">How the handset cord enters the sealed box</span></div>
+    </article>
+    <article class="deck later">
+      <div class="deck-top"><span class="deck-id">CD-02 · Phase 4</span><span class="deck-q">Vulgarity detection — prompt-only, or a real classifier</span></div>
+      <p>Today "zero inappropriate content" rests on prompt text plus the model choosing to call <span class="m">end_call</span>, with no deterministic backstop. The source document rates this Medium priority. For an unattended box used by unsupervised children, that rating is wrong.</p>
+    </article>
+    <article class="deck later">
+      <div class="deck-top"><span class="deck-id">CD-03 · Phase 5–6</span><span class="deck-q">Admin UI and Grafana on the Pi, or a separate home server</span></div>
+      <p>Decides the Pi's thermal budget in a cold sealed box, and whether an observability crash takes the phone down with it.</p>
+    </article>
+    <article class="deck later">
+      <div class="deck-top"><span class="deck-id">CD-04c/e · Phase 5</span><span class="deck-q">Attract-state music source, and PIN complexity</span></div>
+    </article>
+    <article class="deck later">
+      <div class="deck-top"><span class="deck-id">CD-04d · Phase 7</span><span class="deck-q">Signage — how a child knows what the box is</span></div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ SIGNAL PATH ============ -->
+<section>
+  <div class="sec-head">
+    <span class="num">Section 02 — architecture</span>
+    <h2>How a voice gets to Santa and back</h2>
+    <p>One unified speech-to-speech loop, not a pipeline of three vendors. That choice is locked (CD-01) and it is why per-stage latency metrics were dropped from the spec — there are no stage boundaries to measure.</p>
+  </div>
+
+  <figure>
+    <div class="figbox">
+      <svg viewBox="0 0 900 400" role="img" aria-label="Signal path: handset audio goes through a USB adapter to a Raspberry Pi, which streams it to the OpenAI Realtime API over an undecided transport and plays the returned Santa audio back; a cradle microswitch signals off-hook over GPIO; nothing is written to disk.">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+          </marker>
+          <marker id="ar-hi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#A81A16"/>
+          </marker>
+        </defs>
+
+        <!-- privacy boundary -->
+        <rect x="10" y="58" width="560" height="200" rx="4" class="s-dash"/>
+        <text x="20" y="50" class="s-s">NOTHING PERSISTED — no audio, no transcripts, ever</text>
+
+        <!-- boxes -->
+        <rect x="26" y="120" width="126" height="76" rx="3" class="s-box"/>
+        <text x="89" y="152" class="s-t" text-anchor="middle">Handset</text>
+        <text x="89" y="170" class="s-s" text-anchor="middle">mic + earpiece</text>
+
+        <rect x="200" y="120" width="140" height="76" rx="3" class="s-box"/>
+        <text x="270" y="146" class="s-t" text-anchor="middle">USB audio</text>
+        <text x="270" y="163" class="s-t" text-anchor="middle">adapter</text>
+        <text x="270" y="181" class="s-s" text-anchor="middle">driverless</text>
+
+        <rect x="388" y="120" width="166" height="76" rx="3" class="s-box"/>
+        <text x="471" y="146" class="s-t" text-anchor="middle">Session manager</text>
+        <text x="471" y="163" class="s-t" text-anchor="middle">Raspberry Pi 5</text>
+        <text x="471" y="181" class="s-s" text-anchor="middle">headless · no browser</text>
+
+        <rect x="722" y="120" width="160" height="76" rx="3" class="s-box"/>
+        <text x="802" y="146" class="s-t" text-anchor="middle">OpenAI</text>
+        <text x="802" y="163" class="s-t" text-anchor="middle">Realtime API</text>
+        <text x="802" y="181" class="s-s" text-anchor="middle">gpt-realtime</text>
+
+        <!-- short arrows -->
+        <line x1="152" y1="158" x2="196" y2="158" class="s-line" marker-end="url(#ar)" marker-start="url(#ar)"/>
+        <line x1="340" y1="158" x2="384" y2="158" class="s-line" marker-end="url(#ar)" marker-start="url(#ar)"/>
+        <text x="176" y="146" class="s-s" text-anchor="middle">3.5mm</text>
+        <text x="362" y="146" class="s-s" text-anchor="middle">USB</text>
+
+        <!-- long link -->
+        <line x1="554" y1="140" x2="718" y2="140" class="s-line" marker-end="url(#ar)"/>
+        <text x="636" y="132" class="s-l" text-anchor="middle">child audio</text>
+        <line x1="718" y1="182" x2="558" y2="182" class="s-line" marker-end="url(#ar)"/>
+        <text x="636" y="200" class="s-l" text-anchor="middle">Santa audio</text>
+
+        <!-- transport decision -->
+        <rect x="566" y="70" width="140" height="42" rx="3" class="s-box-hi"/>
+        <text x="636" y="87" class="s-l-hi" text-anchor="middle">TRANSPORT?</text>
+        <text x="636" y="103" class="s-l-hi" text-anchor="middle">WebRTC / WebSocket</text>
+        <line x1="636" y1="112" x2="636" y2="134" class="s-line-hi" marker-end="url(#ar-hi)"/>
+
+        <!-- hook switch -->
+        <rect x="388" y="288" width="166" height="66" rx="3" class="s-box"/>
+        <text x="471" y="314" class="s-t" text-anchor="middle">Cradle microswitch</text>
+        <text x="471" y="332" class="s-s" text-anchor="middle">normally closed, lever arm</text>
+        <line x1="471" y1="284" x2="471" y2="200" class="s-line" marker-end="url(#ar)"/>
+        <text x="482" y="248" class="s-l">GPIO · off-hook starts,</text>
+        <text x="482" y="264" class="s-l">on-hook ends the session</text>
+
+        <!-- latency budget -->
+        <text x="884" y="228" class="s-l-hi" text-anchor="end">round trip must stay under 2s p95</text>
+      </svg>
+    </div>
+    <figcaption><b>The only thing crossing the property line is live audio.</b> The dashed boundary is the privacy rule made structural — session logs carry a session ID, duration, states visited and errors, nothing else, rotated daily and kept 7 days. The red box is the one link in this chain that is still undecided.</figcaption>
+  </figure>
+
+  <div class="note">
+    <h4>The proof of concept is evidence, not a head start</h4>
+    <p><span class="m">poc/index.html</span> holds the entire control loop in 320 lines of browser JavaScript — the WebRTC handshake, <span class="m">getUserMedia</span> mic capture, every timer, the LED states and the teardown. The target has no browser, no screen and no <span class="m">getUserMedia</span> anywhere in it.</p>
+    <p>Only two things transfer directly: the token-broker role in <span class="m">server.py</span>, and the <span class="m">SANTA_INSTRUCTIONS</span> persona string. <strong>Phase 2 is a headless re-implementation, not a deployment.</strong></p>
+  </div>
+</section>
+
+<!-- ============ STATE MACHINE ============ -->
+<section>
+  <div class="sec-head">
+    <span class="num">Section 03 — the call</span>
+    <h2>What happens between pick-up and hang-up</h2>
+    <p>Fully specified and already working — but it exists only as browser JavaScript that gets thrown away. These timings are read off the running proof of concept, and they are the contract Phase 2 has to reproduce.</p>
+  </div>
+
+  <figure>
+    <div class="figbox">
+      <svg viewBox="0 0 720 600" role="img" aria-label="Call state machine: IDLE to GREETING on handset lift, to CONVERSATION, to WRAP-UP at 4 minutes 15 seconds, to ENDED; a 15-second silence triggers a check-in that returns to conversation; four early exits call end_call and jump to ENDED; hanging up returns to IDLE.">
+        <defs>
+          <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+          </marker>
+          <marker id="ar2-hi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#A81A16"/>
+          </marker>
+        </defs>
+
+        <!-- states -->
+        <rect x="46" y="40" width="200" height="54" rx="3" class="s-box"/>
+        <text x="146" y="66" class="s-t" text-anchor="middle">IDLE</text>
+        <text x="146" y="82" class="s-s" text-anchor="middle">attract state, on cradle</text>
+
+        <rect x="46" y="150" width="200" height="54" rx="3" class="s-box"/>
+        <text x="146" y="176" class="s-t" text-anchor="middle">GREETING</text>
+        <text x="146" y="192" class="s-s" text-anchor="middle">Santa speaks first</text>
+
+        <rect x="46" y="260" width="200" height="54" rx="3" class="s-box"/>
+        <text x="146" y="286" class="s-t" text-anchor="middle">CONVERSATION</text>
+        <text x="146" y="302" class="s-s" text-anchor="middle">turn latency &lt; 2s p95</text>
+
+        <rect x="46" y="370" width="200" height="54" rx="3" class="s-box"/>
+        <text x="146" y="396" class="s-t" text-anchor="middle">WRAP-UP</text>
+        <text x="146" y="412" class="s-s" text-anchor="middle">Santa begins his goodbye</text>
+
+        <rect x="46" y="480" width="200" height="54" rx="3" class="s-box"/>
+        <text x="146" y="506" class="s-t" text-anchor="middle">ENDED</text>
+        <text x="146" y="522" class="s-s" text-anchor="middle">teardown, reset</text>
+
+        <!-- main arrows -->
+        <line x1="146" y1="94" x2="146" y2="146" class="s-line" marker-end="url(#ar2)"/>
+        <text x="258" y="118" class="s-l">handset lifted · GPIO</text>
+        <text x="258" y="133" class="s-s">t = 0:00</text>
+
+        <line x1="146" y1="204" x2="146" y2="256" class="s-line" marker-end="url(#ar2)"/>
+        <text x="258" y="234" class="s-l">greeting delivered</text>
+
+        <line x1="146" y1="314" x2="146" y2="366" class="s-line" marker-end="url(#ar2)"/>
+        <text x="258" y="338" class="s-l">t = 4:15 · nudge sent</text>
+        <text x="258" y="353" class="s-s">45s before the cap</text>
+
+        <line x1="146" y1="424" x2="146" y2="476" class="s-line" marker-end="url(#ar2)"/>
+        <text x="258" y="448" class="s-l">goodbye spoken, then</text>
+        <text x="258" y="463" class="s-l">end_call("goodbye")</text>
+
+        <!-- silence self-loop -->
+        <path d="M 46 274 C 8 274, 8 310, 46 306" class="s-line" marker-end="url(#ar2)"/>
+        <text x="16" y="238" class="s-s" transform="rotate(-90 16 238)" text-anchor="middle">15s quiet → &#8220;still there?&#8221;</text>
+
+        <!-- early exits -->
+        <rect x="404" y="252" width="286" height="118" rx="3" class="s-box-hi"/>
+        <text x="420" y="276" class="s-l-hi">EARLY EXITS → end_call</text>
+        <text x="420" y="298" class="s-l">28s quiet ....... no_response</text>
+        <text x="420" y="317" class="s-l">vulgar language .. inappropriate</text>
+        <text x="420" y="336" class="s-l">t = 5:00 hard cap  goodbye</text>
+        <text x="420" y="355" class="s-l">handset hung up .. teardown</text>
+        <line x1="250" y1="287" x2="400" y2="292" class="s-line-hi" marker-end="url(#ar2-hi)"/>
+
+        <path d="M 547 370 L 547 507 L 250 507" class="s-line-hi" marker-end="url(#ar2-hi)"/>
+
+        <!-- return -->
+        <path d="M 46 520 L 20 520 L 20 60 L 42 60" class="s-line" marker-end="url(#ar2)"/>
+        <text x="34" y="300" class="s-s" transform="rotate(-90 34 300)" text-anchor="middle">on-hook · reset to IDLE</text>
+      </svg>
+    </div>
+    <figcaption><b>Santa hangs up on himself.</b> Nothing external cuts the call — the model is instructed to speak its goodbye out loud first and only then call <span class="m">end_call</span>, so a child never hears a line go dead mid-sentence. The vulgarity exit is a fixed script, said once, warmly and firmly, followed by silence. <b>That path is the one with no deterministic backstop today</b> — it is CD-02, and Phase 4 exists to fix it.</figcaption>
+  </figure>
+</section>
+
+<!-- ============ PHYSICAL ============ -->
+<section>
+  <div class="sec-head">
+    <span class="num">Section 04 — the physical build</span>
+    <h2>A sealed box on a post, at child height</h2>
+    <p>The original document assumed a full-size mahogany walk-in booth at $600–800. That unit prices at <strong>$2,195</strong>, weighs 200 lbs and is rated indoor-only. Dropping it is the single change that makes this budget work.</p>
+  </div>
+
+  <figure>
+    <div class="figbox">
+      <svg viewBox="0 0 760 330" role="img" aria-label="Width comparison: the cabinet cavity is 14.5 inches wide. A Raspberry Pi in a case is 6 inches and fits with room for the sealing margin. A 14-inch laptop is 14.8 inches, 0.3 over. A 15.6-inch laptop is 16.2 inches, 1.7 over.">
+        <!-- scale: 0..18in over x 180..730 -->
+        <text x="170" y="118" class="s-t" text-anchor="end">Pi 5 in case</text>
+        <rect x="180" y="100" width="183" height="28" rx="2" fill="#2F5D50" opacity="0.85"/>
+        <text x="373" y="119" class="s-l">6.0&#8243; — fits, with room to seal</text>
+
+        <text x="170" y="173" class="s-t" text-anchor="end">14&#8243; laptop</text>
+        <rect x="180" y="155" width="452" height="28" rx="2" class="s-box-hi"/>
+        <text x="642" y="174" class="s-l-hi">14.8&#8243; — 0.3 over</text>
+
+        <text x="170" y="228" class="s-t" text-anchor="end">15.6&#8243; laptop</text>
+        <rect x="180" y="210" width="495" height="28" rx="2" class="s-box-hi"/>
+        <text x="685" y="229" class="s-l-hi">16.2&#8243;</text>
+
+        <!-- cavity limit -->
+        <line x1="623" y1="78" x2="623" y2="268" class="s-line-hi" stroke-dasharray="6 4"/>
+        <text x="623" y="66" class="s-l-hi" text-anchor="middle">cabinet cavity — 14.5&#8243;</text>
+
+        <!-- axis -->
+        <line x1="180" y1="272" x2="730" y2="272" class="s-line" stroke-width="1"/>
+        <line x1="180" y1="272" x2="180" y2="278" class="s-line" stroke-width="1"/>
+        <line x1="333" y1="272" x2="333" y2="278" class="s-line" stroke-width="1"/>
+        <line x1="486" y1="272" x2="486" y2="278" class="s-line" stroke-width="1"/>
+        <line x1="639" y1="272" x2="639" y2="278" class="s-line" stroke-width="1"/>
+        <text x="180" y="292" class="s-s" text-anchor="middle">0</text>
+        <text x="333" y="292" class="s-s" text-anchor="middle">5&#8243;</text>
+        <text x="486" y="292" class="s-s" text-anchor="middle">10&#8243;</text>
+        <text x="639" y="292" class="s-s" text-anchor="middle">15&#8243;</text>
+        <text x="180" y="316" class="s-s">Interior cavity measures 14.5 &#215; 12.5 &#215; 20.5&#8243;. D-03 requires a sealed inner box ~2&#8243; larger per horizontal axis — a margin the laptops never even reach.</text>
+      </svg>
+    </div>
+    <figcaption><b>This is what decided the compute question.</b> Only a 13-inch-class laptop clears the cavity at all, and the one that fits is still fan-cooled inside a box that has to be sealed shut. Everything larger lies flat and unsealed on the cabinet floor — precisely the arrangement D-03 forbids. With the Pi locked in, the sealed inner box is now specced to a ~6&#215;5&#215;3.5&#8243; footprint rather than a laptop-class one.</figcaption>
+  </figure>
+
+  <div class="tw">
+    <table>
+      <thead>
+        <tr><th>Layer</th><th>What it is</th><th>Why it's specified that way</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Footing</td><td class="num">4&#215;4 PT post, fast-set concrete</td><td>Untreated wood rots at the soil line within a season. Fast-set is the qualifier — standard mix extends the cure window this order exists to protect.</td></tr>
+        <tr><td>Cabinet</td><td class="num">16&#215;14&#215;22&#8243;, post-mounted</td><td>Solid wood or weatherproof composite, mounted at child height. Not ground-standing.</td></tr>
+        <tr><td>Inner box</td><td class="num">sealed, ~2&#8243; oversize</td><td>The electronics get their own sealed enclosure inside the cabinet, not just the cabinet.</td></tr>
+        <tr><td>Cable entry</td><td class="num">IP68 compression gland</td><td>A drilled hole and a bead of silicone lets water track down the cable and straight into the box.</td></tr>
+        <tr><td>Air</td><td class="num">breather vent + desiccant</td><td>A sealed box in a 30&#176; swing condenses on the inside. Pressure equalisation is not optional.</td></tr>
+        <tr><td>Seam sealing</td><td class="num">polyurethane <em>and</em> silicone</td><td>Both, for different joints. Ordered together.</td></tr>
+        <tr><td>Operating range</td><td class="num">20&#8211;50&#176;F</td><td>Pi 5 is rated 0&#8211;50&#176;C. A typical laptop is rated 10&#8211;35&#176;C — it does not cover a December night.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ TIMELINE ============ -->
+<section>
+  <div class="sec-head">
+    <span class="num">Section 05 — schedule</span>
+    <h2>Sixteen weeks, thirteen left</h2>
+    <p>Every structural choice in this plan exists to protect the December date. Hardware with shipping lead time is bought in Phase 1 rather than when it's needed, so shipping runs in parallel with software instead of after it.</p>
+  </div>
+
+  <ol class="tl">
+    <li class="now">
+      <div class="tl-top"><span class="tl-name">1 · Procurement, site survey, repo cleanup</span><span class="tl-date">due Aug 25</span><span class="chip red">3/10 · 7 days late</span></div>
+      <p>Every long-lead purchase placed and every question that could invalidate the build plan answered. All remaining work is the three decisions in Section 01 — and with the enclosure off the critical path, none of them is gated by a shipping clock any more.</p>
+    </li>
+    <li>
+      <div class="tl-top"><span class="tl-name">2 · Headless session core</span><span class="tl-date">due Oct 6</span><span class="chip">6 weeks</span></div>
+      <p>The whole conversation — pick up, greeting, talk, wrap-up, hang up — running end to end on a bench Pi through a real handset, with no browser and no screen anywhere in the loop. The largest phase by far.</p>
+    </li>
+    <li>
+      <div class="tl-top"><span class="tl-name">3 · Physical build &amp; hardware integration</span><span class="tl-date">due Oct 27</span><span class="chip">3 weeks</span></div>
+      <p>Out of the bench rig and into the real booth — real cradle switch, real LEDs, sealed against weather, ready to sit outside in the cold.</p>
+    </li>
+    <li>
+      <div class="tl-top"><span class="tl-name">4 · Safety guardrail &amp; verification</span><span class="tl-date">due Nov 3</span><span class="chip">1 week</span></div>
+      <p>"Zero inappropriate content" stops being an aspiration in a concept document and becomes a decided mechanism plus a test run that passed.</p>
+    </li>
+    <li>
+      <div class="tl-top"><span class="tl-name">5 · Scheduling, admin control &amp; system states</span><span class="tl-date">due Nov 17</span><span class="chip">2 weeks</span></div>
+      <p>Santa's hours change from a phone in seconds, and the box behaves correctly in all three states — inviting when on, resting when off, talking when in use.</p>
+    </li>
+    <li>
+      <div class="tl-top"><span class="tl-name">6 · Observability &amp; unattended operation</span><span class="tl-date">due Nov 24</span><span class="chip">1 week</span></div>
+      <p>The box reports its own health in a form readable from the couch, alerts when something is actually wrong, and recovers from power blips and network drops without anyone walking outside.</p>
+    </li>
+    <li>
+      <div class="tl-top"><span class="tl-name">7 · Outdoor install &amp; season readiness</span><span class="tl-date">due Dec 1</span><span class="chip moss">the date</span></div>
+      <p>The booth is standing in the front yard, powered and connected, and a child who has never seen it before walks up and has a complete conversation with nobody helping.</p>
+    </li>
+  </ol>
+
+  <div class="note">
+    <h4>Where the slack actually is</h4>
+    <p>Phase 1 is seven days late, but Phase 1 is not the risk — <strong>it is two weeks of calendar holding six weeks of Phase 2 hostage</strong>, and Phase 2 is a from-scratch headless rewrite. The four answers in Section 01 are worth more than any amount of planning, because three of them are purchases and configuration that only wait on a person.</p>
+    <p><strong>Revised 1 September.</strong> The enclosure was the one item where lateness could not be recovered by working harder later — but a custom build and a stake-mounted box remove both the shipping clock and the concrete cure window. What is left on the critical path is 01-06, whose revocation record gates the irreversible deletion of <span class="m">voice/</span>.</p>
+  </div>
+</section>
+
+<!-- ============ BUDGET & SCOPE ============ -->
+<section>
+  <div class="sec-head">
+    <span class="num">Section 06 — money and scope</span>
+    <h2>Roughly $1,000 in parts, $150 a month in Santa</h2>
+  </div>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Line</th><th>Budgeted</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Enclosure — purchased <em>or</em> custom</td><td class="num">$150–230 / TBD</td><td>deprioritized (D-28)</td></tr>
+        <tr><td>Compute — Pi 5 8GB, board only</td><td class="num">$239.75</td><td>decided · plan 08 orders it</td></tr>
+        <tr><td>Rotary phone, full body + cradle</td><td class="num">~$70</td><td>awaiting order</td></tr>
+        <tr><td>Removable stake, ballast base, bracing</td><td class="num">~$40–70</td><td>replaces post + concrete (D-27)</td></tr>
+        <tr><td>Glands, sealants, vent, desiccant</td><td class="num">~$45</td><td>awaiting order</td></tr>
+        <tr><td>USB audio ×2, microswitch, LEDs, wiring</td><td class="num">unpriced</td><td>specced, no reseller stocks them</td></tr>
+        <tr><td>Cat6 + PoE <em>or</em> cord + GFCI</td><td class="num">~$60–120</td><td>follows the yard visit</td></tr>
+        <tr><td><strong>Hardware total</strong></td><td class="num"><strong>~$850–1,050</strong></td><td>—</td></tr>
+        <tr><td>OpenAI Realtime, per month</td><td class="num">$150 cap</td><td>awaiting configuration</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Cut from v1, deliberately</h3>
+  <ul class="plain">
+    <li><strong>The camera, entirely</strong> — no hardware, no mount point, no video stream, no admin screen, no budget line. The source document contradicted itself across four sections; the scope statement won.</li>
+    <li><strong>Physical traffic awareness</strong> — depended on the camera, falls with it.</li>
+    <li><strong>Recording or replaying calls</strong> — direct conflict with the privacy rule.</li>
+    <li><strong>Remote or internet-facing admin</strong> — local network only, PIN stored hashed. Keeps the attack surface at zero.</li>
+    <li><strong>The modular voice stack</strong> — Whisper + Claude + ElevenLabs was evaluated and closed in favour of the unified Realtime API.</li>
+    <li><strong>Multiple simultaneous callers, multi-language</strong> — one handset by construction; one neighbourhood.</li>
+  </ul>
+</section>
+
+<!-- ============ DOCS ============ -->
+<section>
+  <div class="sec-head">
+    <span class="num">Section 07 — sources</span>
+    <h2>Where each of these facts lives</h2>
+    <p>This page is assembled from four documents. Where they disagree, the order below is the tiebreak.</p>
+  </div>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>File</th><th>What it holds</th><th>Trust</th></tr></thead>
+      <tbody>
+        <tr><td class="num">.planning/PROJECT.md</td><td>Scope, constraints, budget, the CD-01…CD-07 decision log</td><td>Authoritative</td></tr>
+        <tr><td class="num">.planning/ROADMAP.md</td><td>The seven phases, dates, dependencies, success criteria</td><td>Authoritative</td></tr>
+        <tr><td class="num">.planning/REQUIREMENTS.md</td><td>37 requirements across HW / SESS / EXP / SAFE / ADMIN / OBS / OPS, plus the metric contract</td><td>Authoritative</td></tr>
+        <tr><td class="num">call-santa-pre-prd.md</td><td>The original concept — user journey, hardware reference design, admin screens, shopping list</td><td>Partly superseded</td></tr>
+        <tr><td class="num">poc/index.html</td><td>The working call loop and every timing in Section 03</td><td>Evidence only</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Three things in the pre-PRD are now wrong and stay wrong: the camera is cut, the mahogany booth is replaced, and the per-stage STT/LLM/TTS metrics were dropped as unimplementable under a unified Realtime loop. The latency alert also moved from 3s to 2s, to match the success criterion it was supposed to be defending — the old pair left a silent band where the system missed its own target without warning.</p>
+</section>
+
+<footer>
+  Assembled 2026-09-01 from .planning/ and the proof of concept · compute locked at ffba297 · 13 weeks to install<br>
+  Three decisions open · critical path is now 01-06 · install is seasonal, not permanent
+</footer>
+
+</div>
