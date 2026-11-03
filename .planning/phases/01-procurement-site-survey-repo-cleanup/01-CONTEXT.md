@@ -154,6 +154,15 @@ ROADMAP.md success criterion 1 should be read as superseded by D-01.
     spike, ballastable planter base) fits on all three axes with margin and remains a viable
     purchase option **if** its shelf is confirmed removable — a fixed mid-height shelf makes
     lifting the handset off the cradle physically impossible.
+- **D-29 (2026-11-02) —** Spend controls configured with three owner deviations from D-18/D-21/D-23.
+  (a) **Screenshots replaced by an owner attestation** in `SPEND-CEILING.md`; `verify.sh` accepts
+  the `OWNER ATTESTATION:` line in place of the four PNGs. (b) **Limits:** project $200, org $120
+  — the org figure is the ceiling the account's usage tier currently allows, so it binds, not the
+  project limit; alerts $60 / $90 / $110 against the binding $120. (c) **Key kept, not revoked.**
+  The account has one key; it is the one formerly in `voice/my-project/.env` and now sits in
+  `call-santa-prod`. Repo re-check found it in zero commits and no built bundle on disk. Plan 09's
+  deletion gate changes from "revoked" to "backed up outside `voice/`", since deleting the
+  directory could otherwise destroy the only copy of a live key.
 
 </decisions>
 

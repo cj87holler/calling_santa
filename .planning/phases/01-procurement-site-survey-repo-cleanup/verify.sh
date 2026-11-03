@@ -401,25 +401,32 @@ fi
 echo
 echo "-- OPS-03 spend controls --"
 
+CEILING="$EV/spend-controls/SPEND-CEILING.md"
+
+# D-29: the owner may attest to the dashboard configuration in SPEND-CEILING.md
+# instead of capturing the four screenshots. The attestation line satisfies all four.
+ATTESTED=1
+[ -f "$CEILING" ] && grep -qE '^OWNER ATTESTATION: .+ on 20[0-9]{2}-[0-9]{2}-[0-9]{2}$' "$CEILING" && ATTESTED=0
 for png in org-hard-limit.png project-hard-limit.png spend-alerts.png auto-recharge-off.png; do
   if [ -f "$EV/spend-controls/$png" ]; then
     pass "OPS-03 $png captured"
+  elif [ "$ATTESTED" -eq 0 ]; then
+    pass "OPS-03 $png covered by OWNER ATTESTATION (D-29)"
   else
     pending "OPS-03 $png captured"
   fi
 done
-
-CEILING="$EV/spend-controls/SPEND-CEILING.md"
 if [ ! -f "$CEILING" ]; then
   pending "OPS-03 SPEND-CEILING.md exists"
   pending "OPS-03 SPEND-CEILING.md records a dollar figure"
-  pending "OPS-03 SPEND-CEILING.md carries a KEY REVOKED record (name, last four, date)"
+  pending "OPS-03 SPEND-CEILING.md carries a KEY REVOKED or KEY RETAINED record"
 else
   pass "OPS-03 SPEND-CEILING.md exists"
   grep -qE '\$[0-9]' "$CEILING"
   ok $? "OPS-03 SPEND-CEILING.md records a dollar figure"
-  grep -qE 'KEY REVOKED: .+ last-four [0-9A-Za-z]{4} on 20[0-9]{2}-' "$CEILING"
-  ok $? "OPS-03 SPEND-CEILING.md carries a KEY REVOKED record (name, last four, date)"
+  # D-29: either a structured revocation, or an owner-accepted retention line.
+  grep -qE '^KEY REVOKED: .+ last-four [0-9A-Za-z]{4} on 20[0-9]{2}-|^KEY RETAINED: .+ on 20[0-9]{2}-[0-9]{2}-[0-9]{2}$' "$CEILING"
+  ok $? "OPS-03 SPEND-CEILING.md carries a KEY REVOKED or KEY RETAINED record"
 fi
 
 # ---------------------------------------------------------------------------
