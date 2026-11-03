@@ -51,6 +51,10 @@ export function GET() {
 
 export async function POST(request) {
   const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey || !process.env.OPENAI_WEBHOOK_SECRET) {
+    console.log(JSON.stringify({ event: "not_configured" }));
+    return new Response("not configured", { status: 503 });
+  }
   const client = new OpenAI({ apiKey, webhookSecret: process.env.OPENAI_WEBHOOK_SECRET });
 
   let event;
