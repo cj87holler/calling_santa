@@ -136,8 +136,53 @@ function addLine(who, cls) {
   return div.querySelector(".txt");
 }
 
+// --- Christmas sound effects (poc/sounds/pickup.* and hangup.*) ---
+// Missing files are simply skipped, so the call works with or without them.
+const SFX_VOLUME = 0.6;
+// The pickup track is long, so only play a short clip of it with a gentle envelope:
+const PICKUP_CLIP_SECONDS = 6;           // total length heard
+const PICKUP_FADE_IN = 1.0;              // seconds to swell up from silence
+const PICKUP_FADE_OUT = 2.0;             // seconds to taper off at the end of the clip
+const HANGUP_CLIP_SECONDS = 7;           // same idea for the after-call sound
+const HANGUP_FADE_IN = 1.0;
+const HANGUP_FADE_OUT = 2.5;
+let pickupSfx = null, hangupSfx = null;
+
+// Play a sound. With `clip`, it fades in, holds, fades out and stops after clip.seconds.
+function playSfx(name, clip) {
+  const a = new Audio("/sounds/" + name);
+  a.volume = clip ? 0 : SFX_VOLUME;
+  a.play().catch(() => {});              // no file / blocked autoplay -> stay quiet
+  if (clip) {
+    a._envelope = setInterval(() => {
+      const t = a.currentTime;
+      if (t >= clip.seconds) { clearInterval(a._envelope); a.pause(); return; }
+      const rise = Math.min(1, t / clip.fadeIn);
+      const fall = Math.min(1, (clip.seconds - t) / clip.fadeOut);
+      a.volume = SFX_VOLUME * Math.max(0, Math.min(rise, fall));
+    }, 50);
+  }
+  return a;
+}
+// Fade a playing sound out early (pickup jingle when Santa starts talking,
+// hang-up sound if someone calls again before it finishes).
+function fadeOutPickupSfx() { const a = pickupSfx; pickupSfx = null; fadeOutSfx(a); }
+function fadeOutSfx(a) {
+  if (!a) return;
+  clearInterval(a._envelope);
+  if (a.paused) return;
+  const step = setInterval(() => {
+    a.volume = Math.max(0, a.volume - 0.04);
+    if (a.volume === 0) { clearInterval(step); a.pause(); }
+  }, 50);
+}
+
 async function pickup() {
   $("pickup").disabled = true;
+  transcriptEl.innerHTML = "";           // each call starts with a clean slate on screen too
+  fadeOutSfx(hangupSfx); hangupSfx = null;
+  pickupSfx = playSfx("pickup", {        // jingle bells while we dial the North Pole
+    seconds: PICKUP_CLIP_SECONDS, fadeIn: PICKUP_FADE_IN, fadeOut: PICKUP_FADE_OUT });
   setStatus("Dialing the North Pole…");
   try {
     // 1) get a short-lived ephemeral token from our local server (with chosen voice)
@@ -188,6 +233,7 @@ async function pickup() {
   } catch (err) {
     console.error(err);
     setStatus("⚠️ " + err.message);
+    fadeOutPickupSfx();
     setLed("idle");
     cleanup();
     $("pickup").disabled = false;
@@ -223,6 +269,7 @@ function onEvent(e) {
       lastVoiceAt = elapsed; silencePrompted = false;   // child is here
       break;
     case "response.created":
+      fadeOutPickupSfx();
       if (!hangingUp) setStatus("🎅 Santa is talking…");
       lastVoiceAt = elapsed;                              // Santa speaking = activity
       break;
@@ -302,7 +349,11 @@ function cleanup() {
 }
 
 function endCall(reason) {
+  const wasOnCall = !!pc;
   cleanup();
+  fadeOutPickupSfx();
+  if (wasOnCall) hangupSfx = playSfx("hangup", {   // magical sparkle once the line closes
+    seconds: HANGUP_CLIP_SECONDS, fadeIn: HANGUP_FADE_IN, fadeOut: HANGUP_FADE_OUT });
   setLed("ended");
   setStatus(reason || "Call ended.");
   $("hangup").disabled = true;

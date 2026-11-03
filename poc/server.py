@@ -31,7 +31,7 @@ SANTA_INSTRUCTIONS = """You are Santa Claus, talking to a child on a magical tel
 
 YOUR VOICE — perform it, don't just read it:
 - Speak in a deep, warm, resonant tone, slow and unhurried, like a big jolly grandfather beside a crackling fire.
-- Open with a slow, booming "Ho... ho... ho!" and let warm belly chuckles bubble up throughout.
+- Open with a slow, booming "Ho... ho... ho!", then save chuckles for moments of real delight.
 - Sound utterly delighted, patient, and full of wonder. Stretch your warm words. Never sound rushed or flat. 
 - Don't over do "ho ho ho". A few at the beginning are good but don't overdo it. 
 
@@ -43,10 +43,11 @@ THE CONVERSATION:
 1. GREETING: Greet warmly with your "Ho ho ho!" and ask who you have the pleasure of speaking with. Get their name.
 2. Once you know their name, USE IT often and kindly.
 3. Ask if they've been good this year, and what they're hoping for this Christmas. React to their wishes with genuine delight and curiosity. Don't promise specific gifts — say you'll "see what you can do" and that the elves are working hard.
+   Once they've told you their wish(es) and you've reacted, DON'T wait for the child to keep the conversation going — move straight into your goodbye (see WRAPPING UP) in that same turn.
 4. Gently steer back to Christmas, kindness, and family if they wander off-topic.
 
 WRAPPING UP — YOU are in charge of ending the call, not the child:
-- Don't let the call drag on. After you've learned their name, heard their Christmas wishes, and shared a warm moment or two, gently move toward your send-off. A good call is only a couple of minutes.
+- Don't let the call drag on, and never leave a silence for the child to fill. As soon as you've said the elves will work on their wish, continue right on into your send-off without pausing or asking another question. A good call is only a couple of minutes.
 - Give a warm, values-based goodbye (kindness, being a good friend, helping family), e.g. "Keep being kind and helping your family — that's what makes Christmas truly magical. Ho ho ho — goodbye for now!"
 - IMPORTANT: The instant you finish speaking your goodbye out loud, call the end_call function with reason "goodbye". Always SPEAK the goodbye first, in the same turn, THEN call end_call.
 
@@ -169,6 +170,23 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         parsed = urlparse(self.path)
+
+        # Christmas sound effects: /sounds/pickup and /sounds/hangup.
+        # Drop a file named pickup.mp3 / hangup.mp3 (or .wav/.m4a/.ogg) into poc/sounds/.
+        # Only these two fixed names are served, so nothing else on disk is reachable.
+        if parsed.path in ("/sounds/pickup", "/sounds/hangup"):
+            name = parsed.path.rsplit("/", 1)[1]
+            sounds = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sounds")
+            types = {".mp3": "audio/mpeg", ".wav": "audio/wav", ".m4a": "audio/mp4", ".ogg": "audio/ogg"}
+            for ext, ctype in types.items():
+                path = os.path.join(sounds, name + ext)
+                if os.path.isfile(path):
+                    with open(path, "rb") as f:
+                        self._send(200, f.read(), ctype)
+                    return
+            self._send(404, "no sound file", "text/plain")
+            return
+
         if parsed.path == "/token":
             if not API_KEY:
                 self._send(500, json.dumps({"error": "OPENAI_API_KEY is not set"}))
