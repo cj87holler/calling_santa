@@ -41,6 +41,23 @@ Prices are estimates, not verified.
 
 **Total ≈ $130–145.** Not needed for the test: the Pi, PoE gear, the 150 ft outdoor run. Hold those.
 
+**ATA listing check:** title/specs must say **HT801** (or HT801 V2) and **1 FXS port**. Ports are on
+the back: RJ11 "Phone", RJ45 "Internet", micro-USB power. HT802 (2 ports) also works; HT813 does not.
+
+### Optional — if Santa is hard to hear in the handset (owner goal: hear Santa more clearly)
+
+Buy only after test B6 if the handset is too quiet.
+
+| # | Item | Search Amazon for | Must have | ≈ Price |
+|---|------|-------------------|-----------|--------:|
+| 5 | **Inline handset amplifier** (preferred) | `inline telephone handset amplifier` (e.g. Clarity HA40) | Plugs between handset coil cord and phone base — confirm the ECVISION handset cord is modular (unplugs) | $25–40 |
+| 6 | Speaker tap (fallback, loud) | `RJ11 telephone recording adapter 3.5mm` | RJ11 in/out + 3.5 mm out; big speaker needs an AUX input | $15–20 |
+| 7 | Ground loop isolator (only with #6, only if it hums) | `ground loop noise isolator 3.5mm` | 3.5 mm | ~$10 |
+
+A speaker tap makes Santa louder but not clearer (it carries the same phone-quality audio), plays
+the child's voice too, and risks echo — Santa's voice re-entering the handset mic. The handset
+amplifier has none of those problems.
+
 The ECVISION phone has no keypad, which doesn't matter here — the ATA dials automatically on lift.
 
 ---
@@ -85,6 +102,7 @@ Proves the OpenAI half works, using a free softphone app on the laptop in place 
 | B4 | Child hangs up mid-call | Hang up → OpenAI session ends (check usage stops; no lingering cost) |
 | B5 | Pick up again | Brand-new call; Santa doesn't remember your name |
 | B6 | Sound quality | Voice is warm, not tinny/robotic over a phone line (phone audio is narrower than the laptop) |
+| B6b | HD voice | In the ATA, put **G.722** first in the codec list and repeat B6. If calls fail or sound the same, OpenAI doesn't take G.722 — revert to PCMU |
 | B7 | Stranger test | A call to the project from anything other than your ATA is **rejected** |
 
 ### Part C — what carries over from the POC (to check, not to build yet)
