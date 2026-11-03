@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Compute locked (DECISION pi-5). Enclosure deprioritized off the critical path (D-28); mount now removable (D-27); deployment is seasonal (D-26). 3 checkpoints remain open: 01-03, 01-05, 01-06"
+stopped_at: "Paused 2026-11-02. 01-06 done (D-29). Spike 01 (analog phone + HT801 ATA + OpenAI SIP, D-30 provisional) in progress: santa-line deployed to Vercel, waiting on owner setup — new santa-line key + revoke old ...V0A key, OpenAI webhook, 3 Vercel env vars. Then Linphone softphone test (Part A). Pi order on hold; ATA + ECVISION phone not yet ordered."
 last_updated: "2026-09-02T02:04:26.532Z"
-last_activity: 2026-09-02
+last_activity: 2026-11-02
 progress:
   total_phases: 7
   completed_phases: 0
@@ -170,6 +170,6 @@ plus Pi transport choice — WebRTC vs WebSocket — forced in Phase 2.
 
 ## Session Continuity
 
-Last session: 2026-09-02T02:04:26.525Z
-Stopped at: Compute locked (DECISION pi-5). Enclosure deprioritized off the critical path (D-28); mount now removable (D-27); deployment is seasonal (D-26). 3 checkpoints remain open: 01-03, 01-05, 01-06
-Resume file: None
+Last session: 2026-11-02
+Stopped at: Paused 2026-11-02. 01-06 done (D-29). Spike 01 (analog phone + HT801 ATA + OpenAI SIP, D-30 provisional) in progress: santa-line deployed to Vercel, waiting on owner setup — new santa-line key + revoke old ...V0A key, OpenAI webhook, 3 Vercel env vars. Then Linphone softphone test (Part A). Pi order on hold; ATA + ECVISION phone not yet ordered.
+Resume file: .planning/spikes/01-ata-sip/TEST-PLAN.md
