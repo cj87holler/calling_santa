@@ -24,6 +24,6 @@ Owner configured the OpenAI dashboard on 2026-11-02. Full record in
   `voice/my-project/.env` file may be the only on-disk copy of the live key.
 
 ## Open for the owner
-- Save the key somewhere outside `voice/` (password manager), then flip `KEY BACKED UP:` to yes.
+- ~~Save the key outside `voice/`~~ — done 2026-11-02 (owner confirmed, password manager).
 - Add season credit early in November so the usage tier rises before go-live; until then $120/month
   (≈8 calls/day full model, ≈25/day mini) is the ceiling.

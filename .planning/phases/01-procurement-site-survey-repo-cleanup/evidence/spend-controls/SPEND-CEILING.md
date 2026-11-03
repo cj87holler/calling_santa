@@ -62,7 +62,7 @@ to accept, and is capped by the limits above.
 **Plan 09 gate change:** `rm -rf voice/` no longer gates on revocation. It gates on the key being saved
 somewhere other than `voice/my-project/.env`, because that file may be the only on-disk copy:
 
-KEY BACKED UP: pending
+KEY BACKED UP: yes on 2026-11-02
 
 Plan 09 must not delete `voice/` until the line above reads `KEY BACKED UP: yes on <YYYY-MM-DD>`.
 
