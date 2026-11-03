@@ -113,6 +113,9 @@ let pc = null, dc = null, micStream = null, audioEl = null;
 let timerId = null, elapsed = 0;
 let childLine = null, santaLine = null;   // in-progress streaming transcript lines
 let hangingUp = null;                 // reason string once Santa calls end_call
+let hangupPending = null;             // reason, once his goodbye is generated but still playing
+let hangupFallback = null;            // safety timer in case the "audio stopped" signal never comes
+let santaAudioPlaying = false;        // true while Santa's voice is coming out of the speaker
 let lastVoiceAt = 0;                  // elapsed-seconds of last speech/response activity
 let silencePrompted = false;          // did we already nudge "are you still there?"
 
@@ -283,14 +286,36 @@ function onEvent(e) {
         setStatus("🎅 Santa is saying goodbye…");
       }
       break;
+    // --- is Santa's voice actually still coming out of the speaker? ---
+    // The text finishes generating well before the audio finishes playing, so we hang
+    // up on the audio signal, not on response.done.
+    case "output_audio_buffer.started":
+      santaAudioPlaying = true;
+      break;
+    case "output_audio_buffer.stopped":
+    case "output_audio_buffer.cleared":
+      santaAudioPlaying = false;
+      if (hangupPending) finishHangup();
+      break;
+
     case "response.done":
-      // if Santa called end_call this turn, let his spoken goodbye finish, then close
+      // if Santa called end_call this turn, wait for his spoken goodbye to finish
       if (hangingUp) {
-        const reason = hangingUp; hangingUp = null;
-        setTimeout(() => endCall(hangupMessage(reason)), 2600);
+        hangupPending = hangingUp; hangingUp = null;
+        hangupFallback = setTimeout(finishHangup, 20000);      // safety net
+        // if his audio hasn't even started yet, give it a moment before assuming there is none
+        if (!santaAudioPlaying) setTimeout(() => { if (hangupPending && !santaAudioPlaying) finishHangup(); }, 1500);
       }
       break;
   }
+}
+
+// Hang up a beat after Santa's last word has actually played.
+function finishHangup() {
+  const reason = hangupPending; hangupPending = null;
+  if (!reason) return;
+  clearTimeout(hangupFallback); hangupFallback = null;
+  setTimeout(() => endCall(hangupMessage(reason)), 800);
 }
 
 function hangupMessage(reason) {
@@ -301,7 +326,7 @@ function hangupMessage(reason) {
 
 // Inject a hidden system note to Santa and let him respond (used for time/silence nudges).
 function nudgeSanta(note) {
-  if (!dc || dc.readyState !== "open" || hangingUp) return;
+  if (!dc || dc.readyState !== "open" || hangingUp || hangupPending) return;
   dc.send(JSON.stringify({
     type: "conversation.item.create",
     item: { type: "message", role: "system",
@@ -313,6 +338,7 @@ function nudgeSanta(note) {
 
 function startTimer() {
   elapsed = 0; lastVoiceAt = 0; silencePrompted = false; hangingUp = null;
+  hangupPending = null; santaAudioPlaying = false;
   timerEl.textContent = `0:00 / ${fmt(MAX_SECONDS)}`;
   timerId = setInterval(() => {
     elapsed++;
@@ -341,6 +367,7 @@ function startTimer() {
 
 function cleanup() {
   if (timerId) { clearInterval(timerId); timerId = null; }
+  clearTimeout(hangupFallback); hangupFallback = null; hangupPending = null; santaAudioPlaying = false;
   if (dc) { try { dc.close(); } catch {} dc = null; }
   if (pc) { try { pc.close(); } catch {} pc = null; }
   if (micStream) { micStream.getTracks().forEach((t) => t.stop()); micStream = null; }
