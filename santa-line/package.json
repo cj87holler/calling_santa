@@ -1,0 +1,14 @@
+{
+  "name": "santa-line",
+  "private": true,
+  "type": "module",
+  "description": "Answers OpenAI Realtime SIP calls as Santa (spike 01)",
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "@vercel/functions": "^3.10.6",
+    "openai": "^7.47.0",
+    "ws": "^8.22.1"
+  }
+}

@@ -54,9 +54,10 @@ Proves the OpenAI half works, using a free softphone app on the laptop in place 
 1. **OpenAI webhook.** platform.openai.com → `call-santa-prod` → Settings → **Webhooks** → add one for
    the `realtime.call.incoming` event. Save the **webhook secret** in your password manager (not in
    the repo). Note the **project ID** (`proj_...`) — this is what the phone will dial.
-2. **Make the laptop reachable.** OpenAI needs to reach the webhook over the internet. For the test,
-   use a free tunnel (Claude sets this up — e.g. `cloudflared`), pointing at the local server.
-3. **Claude adds a `/webhook` endpoint to the POC server** that: verifies the webhook signature,
+2. **Host on Vercel (D-30).** The call handler lives in `santa-line/` and deploys to Vercel, so
+   OpenAI can always reach it and no laptop tunnel is needed. Vercel's free-plan 300-second function
+   limit sets Santa's hard cap at **4:30** (was 5:00).
+3. **The `santa-line` webhook** (`/api/webhook`): verifies the webhook signature,
    **rejects any call not coming from your own phone/ATA** (see the safety note), then accepts with
    `SANTA_INSTRUCTIONS`, the voice, and the `end_call` tool.
 4. **Install a softphone** (Linphone is free, Mac) and call
