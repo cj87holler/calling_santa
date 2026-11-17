@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Paused 2026-11-02. 01-06 done (D-29). Spike 01 (analog phone + HT801 ATA + OpenAI SIP, D-30 provisional) in progress: santa-line deployed to Vercel, waiting on owner setup — new santa-line key + revoke old ...V0A key, OpenAI webhook, 3 Vercel env vars. Then Linphone softphone test (Part A). Pi order on hold; ATA + ECVISION phone not yet ordered."
+stopped_at: "2026-11-16. Pivot back to the Pi path on a free Raspberry Pi 3 B (D-31). Pi is up: good PSU, OS fully upgraded, joins WiFi ATTPj8JP8V on cold boot, ssh cj@santa.local works. Spike 01 (ATA + SIP) parked, not cancelled. Next: USB audio (headset or USB sound adapter with mic jack) → sound check → first hand-started Santa call from a Python Realtime-over-WebSocket program."
 last_updated: "2026-09-02T02:04:26.532Z"
-last_activity: 2026-11-02
+last_activity: 2026-11-16
 progress:
   total_phases: 7
   completed_phases: 0
@@ -114,6 +114,7 @@ plus Pi transport choice — WebRTC vs WebSocket — forced in Phase 2.
 - [Phase 01] 2026-09-01: **D-28 — enclosure deprioritized, custom build admitted.** Removes the enclosure from the critical path. Interior fit (>=15x13x20) is retained as a design target, not a purchase gate. Evaluated: Wonderjune B0DK6PZ123 fails on depth (~9.5" interior vs a 9" phone body); B0GSSQVJD7 (21x14.5x12.8" exterior, 35.4" spike, ballastable planter base) fits with margin **if** its shelf is confirmed removable.
 - [Phase 01] 2026-11-02: **D-29 — spend controls configured (01-06).** Project $200 / org $120 (tier-capped, binding) / alerts $60-$90-$110 / auto-recharge off, enforcement ON at both scopes by owner attestation (no screenshots). Single key kept in `call-santa-prod`, not revoked; plan 09 now gates on `KEY BACKED UP: yes`.
 - [Phase 01] 2026-11-02: **D-30 (PROVISIONAL — pending spike 01) — analog phone + Grandstream HT801 ATA + OpenAI Realtime SIP, call handling hosted on Vercel.** Owner can't source a USB phone with cradle and won't wire a GPIO hook switch; the ATA detects hook state and auto-dials on lift, and only a phone cord runs to the yard. Webhook + per-call sideband run on Vercel (Hobby 300s function cap → Santa's hard cap drops to 4:30). Settles CD-03 (cloud admin/observability, needs a login) and moots the LTE-vs-ADMIN-01 conflict. **Pi order on hold.** Test plan: `.planning/spikes/01-ata-sip/TEST-PLAN.md`.
+- [Phase 01] 2026-11-16: **D-31 — back to the Pi path, starting on a free Raspberry Pi 3 B (1GB).** Owner got the board free on 2026-11-04. Bring-up blocked for two sessions by undervoltage (a Philips 5V 2.5W = 0.5A brick); fixed with a 2A+ charger (`get_throttled=0x0`). The Pi is fully upgraded and joins WiFi `ATTPj8JP8V` (2.4GHz) on cold boot; `ssh cj@santa.local` works. The Pi 3 is the test bed. Whether it or a Pi 5 ships in the yard is decided after the first Pi call. **Spike 01 (D-30, ATA + SIP) parked, not cancelled.** `santa-line` stays deployed and has no Pi-path role yet. Headless shape agreed in principle: a Python program speaking Realtime over WebSocket (not headless Chromium; too heavy for 1GB). Order: USB audio sound check → hand-started call → port call rules (end_call, cap, silence) → systemd start on boot → trigger. **The no-wiring hook switch is still unsolved;** a USB button or foot pedal is the stopgap.
 - [Phase 01]: DECISION: pi-5 (8GB, board-only from pishop.us, configuration A1) locked as the installation compute; hook-switch input path is the GPIO header with a normally-closed lever-arm microswitch on a pull-up pin, pin assignment deferred to Phase 3
 
 ### Pending Todos
@@ -170,6 +171,6 @@ plus Pi transport choice — WebRTC vs WebSocket — forced in Phase 2.
 
 ## Session Continuity
 
-Last session: 2026-11-02
-Stopped at: Paused 2026-11-02. 01-06 done (D-29). Spike 01 (analog phone + HT801 ATA + OpenAI SIP, D-30 provisional) in progress: santa-line deployed to Vercel, waiting on owner setup — new santa-line key + revoke old ...V0A key, OpenAI webhook, 3 Vercel env vars. Then Linphone softphone test (Part A). Pi order on hold; ATA + ECVISION phone not yet ordered.
-Resume file: .planning/spikes/01-ata-sip/TEST-PLAN.md
+Last session: 2026-11-16
+Stopped at: Pi 3 B up on WiFi (D-31). Next: get USB audio (USB headset, or USB sound adapter with mic jack, ~$10; the Pi 3 has no mic input), then run the sound check and the first hand-started Santa call.
+Resume file: none. Read D-31 in this file.
