@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "2026-11-16. Pivot back to the Pi path on a free Raspberry Pi 3 B (D-31). Pi is up: good PSU, OS fully upgraded, joins WiFi ATTPj8JP8V on cold boot, ssh cj@santa.local works. Spike 01 (ATA + SIP) parked, not cancelled. Next: USB audio (headset or USB sound adapter with mic jack) → sound check → first hand-started Santa call from a Python Realtime-over-WebSocket program."
+stopped_at: "Paused 2026-11-16 night. Pi 3 B on WiFi (D-31). Audio OUT proven: handset earpiece on the Pi 3.5mm jack (card 0 bcm2835 Headphones) played speaker-test and an OpenAI TTS Santa line via pi/say.sh. No mic input on a Pi 3: owner ordering USB audio tonight. Next: USB adapter sound check (mic in) then the first hand-started two-way Santa call."
 last_updated: "2026-09-02T02:04:26.532Z"
 last_activity: 2026-11-16
 progress:
@@ -171,6 +171,15 @@ plus Pi transport choice — WebRTC vs WebSocket — forced in Phase 2.
 
 ## Session Continuity
 
-Last session: 2026-11-16
-Stopped at: Pi 3 B up on WiFi (D-31). Next: get USB audio (USB headset, or USB sound adapter with mic jack, ~$10; the Pi 3 has no mic input), then run the sound check and the first hand-started Santa call.
+Last session: 2026-11-16 (night)
+Stopped at: Pi 3 B on WiFi (D-31). **Audio out proven.** The owner's handset (3.5mm plug) on the Pi's
+headphone jack (`plughw:Headphones`, card 0) played `speaker-test` clearly, and `pi/say.sh` played an
+OpenAI TTS Santa line (gpt-4o-mini-tts, voice `ash`). **Audio in is blocked on hardware:** the Pi 3 has
+no mic input. The owner is ordering USB audio tonight; it must have a **mic input** (a USB sound
+adapter, or one combined TRRS headset jack plus a splitter). A splitter cable alone adds no mic input.
+Next session: (1) `ssh cj@santa.local`; (2) reload the key with `read -s -p "Paste key: " OPENAI_API_KEY && export OPENAI_API_KEY`;
+(3) plug in USB audio, run `arecord -l`, record and play back a clip; (4) write the Python Realtime
+WebSocket client for the first two-way call, started by hand.
+Lessons: long pasted commands get mangled by terminal wrapping, so ship scripts with `scp` instead.
+Big speaker + handset mic needs echo handling (no browser echo cancellation on the Pi).
 Resume file: none. Read D-31 in this file.
