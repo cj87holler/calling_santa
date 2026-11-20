@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Paused 2026-11-16 night. Pi 3 B on WiFi (D-31). Audio OUT proven: handset earpiece on the Pi 3.5mm jack (card 0 bcm2835 Headphones) played speaker-test and an OpenAI TTS Santa line via pi/say.sh. No mic input on a Pi 3: owner ordering USB audio tonight. Next: USB adapter sound check (mic in) then the first hand-started two-way Santa call."
+stopped_at: "Paused 2026-11-19. Mic IN proven on the Pi 3 via USB audio adapter (card 2) + lavalier: pi/soundcheck.sh recorded, peak 11-14% (quiet; gain not yet raised, amixer -c 2 not yet checked). Playback untested: no speaker yet. Hook switch = LXW5-11N1 on GPIO17 (D-32), waiting on dupont wires. Next: first hand-started two-way Realtime call (Python, WebSocket)."
 last_updated: "2026-09-02T02:04:26.532Z"
-last_activity: 2026-11-16
+last_activity: 2026-11-19
 progress:
   total_phases: 7
   completed_phases: 0
@@ -115,6 +115,7 @@ plus Pi transport choice — WebRTC vs WebSocket — forced in Phase 2.
 - [Phase 01] 2026-11-02: **D-29 — spend controls configured (01-06).** Project $200 / org $120 (tier-capped, binding) / alerts $60-$90-$110 / auto-recharge off, enforcement ON at both scopes by owner attestation (no screenshots). Single key kept in `call-santa-prod`, not revoked; plan 09 now gates on `KEY BACKED UP: yes`.
 - [Phase 01] 2026-11-02: **D-30 (PROVISIONAL — pending spike 01) — analog phone + Grandstream HT801 ATA + OpenAI Realtime SIP, call handling hosted on Vercel.** Owner can't source a USB phone with cradle and won't wire a GPIO hook switch; the ATA detects hook state and auto-dials on lift, and only a phone cord runs to the yard. Webhook + per-call sideband run on Vercel (Hobby 300s function cap → Santa's hard cap drops to 4:30). Settles CD-03 (cloud admin/observability, needs a login) and moots the LTE-vs-ADMIN-01 conflict. **Pi order on hold.** Test plan: `.planning/spikes/01-ata-sip/TEST-PLAN.md`.
 - [Phase 01] 2026-11-16: **D-31 — back to the Pi path, starting on a free Raspberry Pi 3 B (1GB).** Owner got the board free on 2026-11-04. Bring-up blocked for two sessions by undervoltage (a Philips 5V 2.5W = 0.5A brick); fixed with a 2A+ charger (`get_throttled=0x0`). The Pi is fully upgraded and joins WiFi `ATTPj8JP8V` (2.4GHz) on cold boot; `ssh cj@santa.local` works. The Pi 3 is the test bed. Whether it or a Pi 5 ships in the yard is decided after the first Pi call. **Spike 01 (D-30, ATA + SIP) parked, not cancelled.** `santa-line` stays deployed and has no Pi-path role yet. Headless shape agreed in principle: a Python program speaking Realtime over WebSocket (not headless Chromium; too heavy for 1GB). Order: USB audio sound check → hand-started call → port call rules (end_call, cap, silence) → systemd start on boot → trigger. **The no-wiring hook switch is still unsolved;** a USB button or foot pedal is the stopgap.
+- [Phase 01] 2026-11-19: **D-32 — GPIO hook switch is back in.** The owner will now wire a hook switch, reversing the no-wiring premise behind D-30 and returning to D-10's design: an **LXW5-11N1** lever micro switch (SPDT) in the old cradle phone, **COM → GND (pin 9), NC → GPIO17 (pin 11)**, internal pull-up, no 3.3V wire. NC means a broken wire reads as on-hook (fail-safe: no runaway billed calls). Female dupont on the Pi header; Wago-style lever connectors at the switch tabs (no soldering). Lift = start Realtime call; hang up = close the socket. Max-length cap + silence hang-up stay mandatory (a phone left off the hook), and after either the program waits for a full hang-up before re-arming; debounce the switch. Audio: **lavalier mic hidden in the handset → USB adapter mic jack; Santa out of the adapter's 1/8\" jack to an external speaker** (not the earpiece). Echo plan: test full duplex first → `near_field` noise reduction + lower volume → half-duplex (mute mic while Santa speaks) as last resort.
 - [Phase 01]: DECISION: pi-5 (8GB, board-only from pishop.us, configuration A1) locked as the installation compute; hook-switch input path is the GPIO header with a normally-closed lever-arm microswitch on a pull-up pin, pin assignment deferred to Phase 3
 
 ### Pending Todos
@@ -171,15 +172,16 @@ plus Pi transport choice — WebRTC vs WebSocket — forced in Phase 2.
 
 ## Session Continuity
 
-Last session: 2026-11-16 (night)
-Stopped at: Pi 3 B on WiFi (D-31). **Audio out proven.** The owner's handset (3.5mm plug) on the Pi's
-headphone jack (`plughw:Headphones`, card 0) played `speaker-test` clearly, and `pi/say.sh` played an
-OpenAI TTS Santa line (gpt-4o-mini-tts, voice `ash`). **Audio in is blocked on hardware:** the Pi 3 has
-no mic input. The owner is ordering USB audio tonight; it must have a **mic input** (a USB sound
-adapter, or one combined TRRS headset jack plus a splitter). A splitter cable alone adds no mic input.
-Next session: (1) `ssh cj@santa.local`; (2) reload the key with `read -s -p "Paste key: " OPENAI_API_KEY && export OPENAI_API_KEY`;
-(3) plug in USB audio, run `arecord -l`, record and play back a clip; (4) write the Python Realtime
-WebSocket client for the first two-way call, started by hand.
-Lessons: long pasted commands get mangled by terminal wrapping, so ship scripts with `scp` instead.
-Big speaker + handset mic needs echo handling (no browser echo cancellation on the Pi).
-Resume file: none. Read D-31 in this file.
+Last session: 2026-11-19
+Stopped at: **Mic in proven.** USB audio adapter (mic in + audio out) shows as **card 2**; lavalier recorded via
+`pi/soundcheck.sh` at peak 11–14% (works, quiet). An `alsamixer -c 2` attempt didn't raise it; `amixer -c 2`
+output not yet seen. If hardware gain is maxed, boost ~3x in software in the call program. **Playback through
+the adapter is untested:** the owner has no speaker yet (earbuds/handset earpiece in the green jack, or a
+powered 1/8" speaker, will do). New Pi power supply works well. Switches (LXW5-11N1) ordered; **dupont wires
+not yet in hand**, so no switch test yet (D-32 has the wiring).
+Next session: (1) `ssh cj@santa.local`, reload key with `read -s`; (2) optionally `amixer -c 2` for gain;
+(3) write the Python Realtime WebSocket client (mic card 2 in, card 2 out, software gain) and make the first
+two-way call started by hand — no switch needed; (4) when wires arrive: switch test script on GPIO17, then
+lift-to-call.
+Lessons: ship scripts with `scp` (pasted long commands get mangled). A Mac can't act as a speaker for the Pi.
+Resume file: none. Read D-31 and D-32 in this file.
