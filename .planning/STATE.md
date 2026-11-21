@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Paused 2026-11-19. Mic IN proven on the Pi 3 via USB audio adapter (card 2) + lavalier: pi/soundcheck.sh recorded, peak 11-14% (quiet; gain not yet raised, amixer -c 2 not yet checked). Playback untested: no speaker yet. Hook switch = LXW5-11N1 on GPIO17 (D-32), waiting on dupont wires. Next: first hand-started two-way Realtime call (Python, WebSocket)."
+stopped_at: "Paused 2026-11-21. Hook switch PROVEN on GPIO17 (bench wiring, red on NO; pi/hooktest.py clean, no bounce). pi/call.py written (hook-triggered Realtime WebSocket call, card 2 in/out, 3x mic gain) but NOT yet run: owner is getting a small speaker for the adapter output. Next: first two-way call with python3 call.py."
 last_updated: "2026-09-02T02:04:26.532Z"
-last_activity: 2026-11-19
+last_activity: 2026-11-21
 progress:
   total_phases: 7
   completed_phases: 0
@@ -172,23 +172,23 @@ plus Pi transport choice — WebRTC vs WebSocket — forced in Phase 2.
 
 ## Session Continuity
 
-Last session: 2026-11-19
-Stopped at: **Mic in proven.** USB audio adapter (mic in + audio out) shows as **card 2**; lavalier recorded via
-`pi/soundcheck.sh` at peak 11–14% (works, quiet). An `alsamixer -c 2` attempt didn't raise it; `amixer -c 2`
-output not yet seen. If hardware gain is maxed, boost ~3x in software in the call program. **Playback through
-the adapter is untested:** the owner has no speaker yet (earbuds/handset earpiece in the green jack, or a
-powered 1/8" speaker, will do). New Pi power supply works well. Switches (LXW5-11N1) ordered; **dupont wires
-not yet in hand**, so no switch test yet (D-32 has the wiring).
-Next session: (1) `ssh cj@santa.local`, reload key with `read -s`; (2) optionally `amixer -c 2` for gain;
-(3) write the Python Realtime WebSocket client (mic card 2 in, card 2 out, software gain) and make the first
-two-way call started by hand — no switch needed; (4) when wires arrive: switch test script on GPIO17, then
-lift-to-call.
-Lessons: ship scripts with `scp` (pasted long commands get mangled). A Mac can't act as a speaker for the Pi.
-Wiring as built (2026-11-21): **green dupont wire → Pi pin 9 (GND)**, the 5th pin in along the odd-numbered
-row, as D-32 planned; its other end goes to the switch's C (COM) tab. **Red dupont wire → Pi pin 11 (GPIO17)**,
-the 6th pin in, right next to green; its other end goes to the switch's NC tab. **Bench test (no cradle yet):
-red goes on NO instead**, so pushing the lever down = off the hook = call starts. Move it back to NC for the cradle.
-Switch has screw terminals (COM / NO / NC).
-**Hook switch proven 2026-11-21** (bench wiring, red on NO): `pi/hooktest.py` read idle at rest, PICKED UP on
-press, HUNG UP on release, one clean line per press (no bounce at 50 ms). python3-websockets 15.0.1 on the Pi.
+Last session: 2026-11-21
+Stopped at: **Hook switch proven; call program written but not yet run (no speaker).**
+- **Switch wiring as built:** green dupont → Pi pin 9 (GND, 5th pin in on the odd row) → switch COM screw.
+  Red dupont → Pi pin 11 (GPIO17, 6th pin in) → switch **NO** screw for the bench test (press lever = off the hook
+  = call starts). **Move red to NC when the cradle is built** (handset resting = idle, lift = call). Switch is the
+  screw-terminal kind (COM / NO / NC); wire goes under the washer, wrapped clockwise. No 3.3V wire.
+- `pi/hooktest.py` passed: idle at rest, PICKED UP on press, HUNG UP on release, one line per press (50 ms debounce).
+- `pi/call.py` written and on the Pi (not yet run): waits for off-hook, opens Realtime over WebSocket
+  (`gpt-realtime`, voice `ash`, persona copied from `poc/server.py`), mic from USB card 2 via arecord with 3x
+  software gain, Santa out card 2 via aplay, `near_field` noise reduction, no transcription requested, end_call
+  hang-up, 5:00 cap with wrap nudge at 4:15, silence nudges at 15s/28s and hard stop at 45s, re-arms only after a
+  full hang-up. Flags: `--now` (no switch), `--half-duplex` (mute mic while Santa talks), `--gain N`.
+  `python3-websockets` 15.0.1 installed on the Pi.
+- Mic in proven 11-19 (card 2, lavalier, quiet). **Playback through the adapter still untested.**
+Next session: (1) owner plugs a small powered speaker into the adapter's green out jack; (2) `ssh cj@santa.local`,
+load key with `read -s`; (3) `python3 call.py`, hold the lever down, talk, let go; (4) tune: `--half-duplex` if Santa
+interrupts himself (echo), `--gain` if he can't hear; (5) then systemd start-on-boot, then the cradle (red → NC).
+Lessons: ship scripts with `scp`, run in a Mac terminal from `~/Desktop/calling_santa/pi` with short commands
+(a pasted multi-line scp split into two commands). A Mac can't act as a speaker for the Pi.
 Resume file: none. Read D-31 and D-32 in this file.
