@@ -184,4 +184,7 @@ Next session: (1) `ssh cj@santa.local`, reload key with `read -s`; (2) optionall
 two-way call started by hand — no switch needed; (4) when wires arrive: switch test script on GPIO17, then
 lift-to-call.
 Lessons: ship scripts with `scp` (pasted long commands get mangled). A Mac can't act as a speaker for the Pi.
+Wiring as built (2026-11-21): **green dupont wire → Pi pin 5** (GPIO3 / SCL, *not* pin 9 or 11 as D-32
+planned). Other wire and which switch tab green goes to: not yet recorded. `pi/hooktest.py` watches GPIO17,
+so it must match the actual pins before the test means anything.
 Resume file: none. Read D-31 and D-32 in this file.
