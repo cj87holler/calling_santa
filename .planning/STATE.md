@@ -186,5 +186,7 @@ lift-to-call.
 Lessons: ship scripts with `scp` (pasted long commands get mangled). A Mac can't act as a speaker for the Pi.
 Wiring as built (2026-11-21): **green dupont wire → Pi pin 9 (GND)**, the 5th pin in along the odd-numbered
 row, as D-32 planned; its other end goes to the switch's C (COM) tab. **Red dupont wire → Pi pin 11 (GPIO17)**,
-the 6th pin in, right next to green; its other end goes to the switch's NC tab.
+the 6th pin in, right next to green; its other end goes to the switch's NC tab. **Bench test (no cradle yet):
+red goes on NO instead**, so pushing the lever down = off the hook = call starts. Move it back to NC for the cradle.
+Switch has screw terminals (COM / NO / NC).
 Resume file: none. Read D-31 and D-32 in this file.
