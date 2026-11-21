@@ -189,4 +189,6 @@ row, as D-32 planned; its other end goes to the switch's C (COM) tab. **Red dupo
 the 6th pin in, right next to green; its other end goes to the switch's NC tab. **Bench test (no cradle yet):
 red goes on NO instead**, so pushing the lever down = off the hook = call starts. Move it back to NC for the cradle.
 Switch has screw terminals (COM / NO / NC).
+**Hook switch proven 2026-11-21** (bench wiring, red on NO): `pi/hooktest.py` read idle at rest, PICKED UP on
+press, HUNG UP on release, one clean line per press (no bounce at 50 ms). python3-websockets 15.0.1 on the Pi.
 Resume file: none. Read D-31 and D-32 in this file.
