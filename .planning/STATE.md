@@ -185,5 +185,6 @@ two-way call started by hand — no switch needed; (4) when wires arrive: switch
 lift-to-call.
 Lessons: ship scripts with `scp` (pasted long commands get mangled). A Mac can't act as a speaker for the Pi.
 Wiring as built (2026-11-21): **green dupont wire → Pi pin 9 (GND)**, the 5th pin in along the odd-numbered
-row, as D-32 planned. Green should go to the switch's C (COM) tab. The GPIO17 wire (pin 11, next to it) is not yet recorded.
+row, as D-32 planned; its other end goes to the switch's C (COM) tab. **Red dupont wire → Pi pin 11 (GPIO17)**,
+the 6th pin in, right next to green; its other end goes to the switch's NC tab.
 Resume file: none. Read D-31 and D-32 in this file.
