@@ -1,0 +1,25 @@
+# Starts the Santa phone on boot and restarts it if it stops.
+# Install (on the Pi):
+#   sudo cp ~/santa.service /etc/systemd/system/santa.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now santa
+# Watch it:   journalctl -u santa -f
+# Stop it:    sudo systemctl stop santa      (needed before running call.py by hand)
+
+[Unit]
+Description=Call Santa phone
+Wants=network-online.target sound.target
+After=network-online.target sound.target
+
+[Service]
+User=cj
+Group=cj
+SupplementaryGroups=audio gpio
+WorkingDirectory=/home/cj
+ExecStart=/usr/bin/python3 -u /home/cj/call.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

@@ -224,4 +224,5 @@ load key with `read -s`; (3) `python3 call.py`, hold the lever down, talk, let g
 interrupts himself (echo), `--gain` if he can't hear; (5) then systemd start-on-boot, then the cradle (red → NC).
 Lessons: ship scripts with `scp`, run in a Mac terminal from `~/Desktop/calling_santa/pi` with short commands
 (a pasted multi-line scp split into two commands). A Mac can't act as a speaker for the Pi.
+**2026-11-22: cradle wired to NC** (green → pin 9 GND, red → pin 11 GPIO17, red on the switch's NC screw). `hooktest.py` passed with the handset: resting = idle, lift = PICKED UP, replace = HUNG UP. No code change needed (closed-to-ground = off hook either way). `pi/santa.service` written (not yet installed).
 Resume file: none. Read D-31 and D-32 in this file.
