@@ -185,7 +185,10 @@ Stopped at: **Hook switch proven; call program written but not yet run (no speak
   hang-up, 5:00 cap with wrap nudge at 4:15, silence nudges at 15s/28s and hard stop at 45s, re-arms only after a
   full hang-up. Flags: `--now` (no switch), `--half-duplex` (mute mic while Santa talks), `--gain N`.
   `python3-websockets` 15.0.1 installed on the Pi.
-- Mic in proven 11-19 (card 2, lavalier, quiet). **Playback through the adapter still untested.**
+- Mic in proven 11-19 (card 2, lavalier, quiet). **Playback through the adapter proven 2026-11-21** with a small
+  powered speaker in the green jack (`speaker-test -D plughw:1,0 -c 2 -t wav -l 1`). **The USB card number shuffles
+  between boots** (card 2 on 11-19, card 1 on 11-21; card 2 was HDMI, which gives "error 524" with no TV). Always
+  check with `aplay -l | grep -i usb`; `call.py` finds the adapter by name, and `SANTA_CARD=N` overrides.
 Next session: (1) owner plugs a small powered speaker into the adapter's green out jack; (2) `ssh cj@santa.local`,
 load key with `read -s`; (3) `python3 call.py`, hold the lever down, talk, let go; (4) tune: `--half-duplex` if Santa
 interrupts himself (echo), `--gain` if he can't hear; (5) then systemd start-on-boot, then the cradle (red → NC).
