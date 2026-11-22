@@ -1,5 +1,10 @@
 # Phase 1 — Session Handoff
 
+> **STALE (2026-08-27).** Since D-31/D-32 the work moved to the Pi 3 path and was tracked outside these
+> plans. The current position (2026-11-22: full call works with the real cradle; next = install
+> `pi/santa.service`) is in `.planning/STATE.md` → Session Continuity. Use this file only for the
+> history of the Phase 1 checkpoint protocols.
+
 **Paused:** 2026-08-27, mid `/gsd:execute-phase 1`
 **Reason:** All agent-completable work is done. Four blocking human checkpoints are open.
 

@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Paused 2026-11-21 night. Pi path PROVEN END TO END on the bench: lever -> jingle -> Santa (Realtime WebSocket) -> goodbye/hang-up -> sparkle, with per-call JSON logs + cost estimate (calls.py). Owner building the phone + cradle hardware next. Next session: systemd start-on-boot for call.py."
+stopped_at: "Paused 2026-11-22. FULL CALL WORKS WITH THE REAL CRADLE: handset on cradle (switch on NC) = idle, lift = jingle + Santa, hang up = sparkle; owner: worked pretty well. pi/santa.service written, NOT yet installed. Next session: install santa.service (start-on-boot), cold-boot test, then yard WiFi test and a Pi-only API key."
 last_updated: "2026-09-02T02:04:26.532Z"
-last_activity: 2026-11-21
+last_activity: 2026-11-22
 progress:
   total_phases: 7
   completed_phases: 0
@@ -172,7 +172,25 @@ plus Pi transport choice — WebRTC vs WebSocket — forced in Phase 2.
 
 ## Session Continuity
 
-Last session: 2026-11-21 (night)
+Last session: 2026-11-22
+**2026-11-22 UPDATE (read this first; it supersedes the 'Stopped at' / 'NEXT SESSION' notes from 11-21 below):**
+- **Cradle built, red wire moved to NC.** Wiring now: green → Pi pin 9 (GND) → switch COM; red → Pi pin 11 (GPIO17)
+  → switch **NC**. Handset resting presses the lever = idle; lift = off hook. No code change (closed-to-ground =
+  off hook either way). `hooktest.py` passed with the real handset.
+- **Full call with the real phone worked** (`python3 call.py`, started by hand over ssh): lift → jingle → Santa →
+  hang up → sparkle. Owner: "worked pretty well." No gain or half-duplex tuning reported as needed.
+- **`pi/santa.service` written and committed, NOT yet copied to or installed on the Pi.** Runs
+  `/usr/bin/python3 -u /home/cj/call.py` as `cj` (groups audio + gpio), `Restart=always`, `RestartSec=5`, after
+  `network-online.target` + `sound.target`. Install steps are in the file's header comment.
+- **NEXT SESSION, in order:** (1) `scp santa.service` to the Pi → `sudo cp` to `/etc/systemd/system/` →
+  `daemon-reload` → `enable --now santa`; (2) cold-boot test: unplug/replug power, wait ~1 min, lift handset
+  with no ssh session, check `journalctl -u santa -f` (USB card found by name? GPIO OK as non-root?);
+  remember `sudo systemctl stop santa` before running `call.py` by hand, or two copies fight over the mic;
+  (3) yard WiFi test with `calls.py --live`; (4) separate Pi-only API key before the yard install;
+  (5) compare `calls.py` cost estimates with the OpenAI usage dashboard.
+- **Deadline:** yard install ~2026-12-01, 9 days from this pause. Software is close to done; the remaining risks are the
+  enclosure/weatherproofing, power, and yard WiFi range.
+
 Stopped at: **Hook switch proven; call program written but not yet run (no speaker).**
 - **Switch wiring as built:** green dupont → Pi pin 9 (GND, 5th pin in on the odd row) → switch COM screw.
   Red dupont → Pi pin 11 (GPIO17, 6th pin in) → switch **NO** screw for the bench test (press lever = off the hook
