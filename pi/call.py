@@ -13,6 +13,9 @@ GPIO17 pulled LOW (switch contact closed) means OFF THE HOOK = call on.
                letting go hangs up. Same program, no flag.
 A loose wire reads as on the hook either way (fail-safe: no runaway billed calls).
 
+Sounds (from the POC): ~/sounds/pickup.wav (jingle while dialing, fades out when Santa starts)
+and ~/sounds/hangup.wav (sparkle after the call). Missing files are skipped silently.
+
 Logging (OBS-04 shape): one JSON line per call and a connectivity check every 5 minutes,
 in ~/santa-logs/YYYY-MM-DD.jsonl, kept 7 days. Numbers only: duration, turns, latency,
 tokens, estimated cost, errors. Never audio, never words. Read them with: python3 calls.py
@@ -38,6 +41,7 @@ import subprocess
 import sys
 import time
 import uuid
+import wave
 from array import array
 from datetime import datetime, timedelta
 
@@ -66,6 +70,9 @@ HOOK_PIN = 17
 
 # Saved key (owner-only file, chmod 600). Used when OPENAI_API_KEY isn't set.
 KEY_FILE = os.path.expanduser("~/.santa_key")
+
+SOUNDS_DIR = os.path.expanduser("~/sounds")  # pickup.wav / hangup.wav: 24 kHz mono 16-bit
+JINGLE_FADE_S = 0.4               # how fast the pickup jingle fades when Santa starts talking
 
 LOG_DIR = os.path.expanduser("~/santa-logs")
 LOG_KEEP_DAYS = 7                 # OBS-04: rotate daily, keep 7 days
@@ -275,6 +282,7 @@ class Speaker:
         self.task = None
         self.queue = asyncio.Queue()
         self.play_until = 0.0
+        self.jingle = None        # Jingle while the pickup sound is playing
 
     async def start(self):
         self.proc = await asyncio.create_subprocess_exec(
@@ -312,6 +320,55 @@ class Speaker:
         self.queue = asyncio.Queue()
         self.play_until = 0.0
         await self.start()
+
+
+def load_sound(name):
+    """Raw 24 kHz mono 16-bit samples from ~/sounds/<name>.wav, or None if missing/wrong format."""
+    path = os.path.join(SOUNDS_DIR, name + ".wav")
+    try:
+        with wave.open(path) as w:
+            if (w.getframerate(), w.getnchannels(), w.getsampwidth()) != (RATE, 1, 2):
+                say(f"(skipping {name}.wav: not 24 kHz mono 16-bit)")
+                return None
+            return w.readframes(w.getnframes())
+    except (OSError, wave.Error, EOFError):
+        return None
+
+
+class Jingle:
+    """Pickup jingle fed to the speaker in real time, so it can fade out the moment Santa speaks."""
+
+    def __init__(self, speaker, pcm):
+        self.speaker = speaker
+        self.pcm = pcm
+        self.pos = 0
+        self.task = asyncio.create_task(self._run())
+        speaker.jingle = self
+
+    async def _run(self):
+        ahead = 3  # keep ~0.3 s queued so it never stutters
+        while self.pos < len(self.pcm):
+            chunk = self.pcm[self.pos:self.pos + CHUNK_BYTES]
+            self.pos += len(chunk)
+            self.speaker.play(chunk)
+            if ahead:
+                ahead -= 1
+            else:
+                await asyncio.sleep(len(chunk) / BYTES_PER_SEC)
+        await asyncio.sleep(0.3)
+        self.speaker.jingle = None
+
+    def stop(self):
+        """Cut the jingle with a short fade (queued before Santa's first audio)."""
+        if self.speaker.jingle is not self:
+            return
+        self.task.cancel()
+        self.speaker.jingle = None
+        tail = array("h")
+        tail.frombytes(self.pcm[self.pos:self.pos + int(JINGLE_FADE_S * BYTES_PER_SEC) // 2 * 2])
+        n = len(tail)
+        if n:
+            self.speaker.play(array("h", (int(v * (1 - i / n)) for i, v in enumerate(tail))).tobytes())
 
 
 class Call:
@@ -376,6 +433,8 @@ class Call:
         try:
             while True:
                 chunk = await proc.stdout.readexactly(CHUNK_BYTES)
+                if self.speaker.jingle is not None:
+                    continue  # don't let the jingle sound like a child talking
                 if self.half_duplex and self.speaker.busy(tail=0.3):
                     continue
                 if self.gain != 1:
@@ -397,6 +456,8 @@ class Call:
                 now = time.monotonic()
                 if self.first_audio_s is None:
                     self.first_audio_s = round(now - self.started, 2)
+                    if self.speaker.jingle:
+                        self.speaker.jingle.stop()
                 if self.speech_stopped_at is not None:
                     self.turn_latencies.append(now - self.speech_stopped_at + VAD_SILENCE_S)
                     self.speech_stopped_at = None
@@ -477,10 +538,12 @@ async def watch_hook(on_hook):
     return "hung_up"
 
 
-async def run_call(key, card, gain, half_duplex, on_hook=None):
+async def run_call(key, card, gain, half_duplex, on_hook=None, sounds=None):
     """One call, start to finish. Returns a line for the screen; logs one JSON record."""
     speaker = Speaker(card)
     await speaker.start()
+    if sounds and sounds.get("pickup"):
+        Jingle(speaker, sounds["pickup"])  # jingle bells while we dial the North Pole
     ws = None
     call = None
     tasks = []
@@ -516,6 +579,8 @@ async def run_call(key, card, gain, half_duplex, on_hook=None):
     finally:
         for t in tasks:
             t.cancel()
+        if speaker.jingle:
+            speaker.jingle.task.cancel()
         if ws is not None:
             try:
                 await ws.close()
@@ -539,6 +604,33 @@ async def run_call(key, card, gain, half_duplex, on_hook=None):
         else:
             record.update(seconds=0, cost_usd=0)
         log_record(record)
+
+
+async def play_sound(card, pcm):
+    """Play a whole sound on its own aplay (the call's speaker is closed by now)."""
+    proc = await asyncio.create_subprocess_exec(
+        "aplay", "-q", "-D", f"plughw:{card},0", "-f", "S16_LE", "-r", str(RATE),
+        "-c", "1", "-t", "raw",
+        stdin=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.DEVNULL)
+    try:
+        proc.stdin.write(pcm)
+        await proc.stdin.drain()
+        proc.stdin.close()
+        await proc.wait()
+    finally:
+        if proc.returncode is None:
+            proc.kill()
+            await proc.wait()
+
+
+async def stop_sound(task):
+    """Cut the hang-up sparkle (someone picked up again): the sound card can only play one thing."""
+    if task and not task.done():
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
 
 
 async def health_loop():
@@ -568,12 +660,16 @@ async def main():
         return
     say(f"USB audio card {card}, model {MODEL}, voice {VOICE}, mic gain {args.gain}"
         + (", half-duplex" if args.half_duplex else ""))
+    sounds = {name: load_sound(name) for name in ("pickup", "hangup")}
+    say("Sounds: " + ", ".join(f"{n} {'on' if pcm else 'missing'}" for n, pcm in sounds.items()))
     log_record({"kind": "start", "model": MODEL, "voice": VOICE, "card": card})
     health = asyncio.create_task(health_loop())
 
     if args.now:
         say("Calling Santa now. Ctrl+C hangs up.")
-        say(f"Call ended: {await run_call(key, card, args.gain, args.half_duplex)}")
+        say(f"Call ended: {await run_call(key, card, args.gain, args.half_duplex, sounds=sounds)}")
+        if sounds["hangup"]:
+            await play_sound(card, sounds["hangup"])
         health.cancel()
         return
 
@@ -585,14 +681,18 @@ async def main():
     # LOW (contact closed) = gpiozero "pressed" = OFF THE HOOK.
     switch = Button(HOOK_PIN, pull_up=True, bounce_time=0.05)
 
+    sparkle = None
     while True:
         say("Ready. Waiting for the phone to come off the hook...")
         while not switch.is_pressed:
             await asyncio.sleep(0.05)
+        await stop_sound(sparkle)
         say("Off the hook: calling Santa.")
         reason = await run_call(key, card, args.gain, args.half_duplex,
-                                on_hook=lambda: not switch.is_pressed)
+                                on_hook=lambda: not switch.is_pressed, sounds=sounds)
         say(f"Call ended: {reason}")
+        if sounds["hangup"]:
+            sparkle = asyncio.create_task(play_sound(card, sounds["hangup"]))
         if switch.is_pressed:
             # Santa hung up, or the cap/silence hit, with the phone still off the hook:
             # don't start another billed call until it's properly hung up.
