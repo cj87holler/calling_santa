@@ -19,8 +19,9 @@ Usage:
   python3 call.py --half-duplex   mute the mic while Santa talks (use if he hears himself)
   python3 call.py --gain 4        software mic boost (default 3; the lavalier is quiet)
 
-Needs OPENAI_API_KEY in the environment (load it with the 'read -s' step) and
-python3-websockets:  sudo apt install -y python3-websockets
+Needs the OpenAI key: either OPENAI_API_KEY in the environment (the 'read -s' step) or
+saved once in ~/.santa_key (owner-only, chmod 600). Also needs python3-websockets:
+  sudo apt install -y python3-websockets
 """
 
 import argparse
@@ -56,6 +57,9 @@ SILENCE_GONE_AT = 28              # s of dead air: Santa says goodbye
 SILENCE_HARD_STOP = 45            # s of dead air: hang up even if Santa didn't
 
 HOOK_PIN = 17
+
+# Saved key (owner-only file, chmod 600). Used when OPENAI_API_KEY isn't set.
+KEY_FILE = os.path.expanduser("~/.santa_key")
 
 # --- Santa's brain (copied from poc/server.py, 2026-11-21) -------------------
 SANTA_INSTRUCTIONS = """You are Santa Claus, talking to a child on a magical telephone that reaches the North Pole.
@@ -371,8 +375,11 @@ async def main():
     args = p.parse_args()
 
     key = os.environ.get("OPENAI_API_KEY", "").strip()
+    if not key and os.path.exists(KEY_FILE):
+        with open(KEY_FILE) as f:
+            key = f.read().strip()
     if not key:
-        print("No key loaded. Run the 'read -s' key step first.")
+        print(f"No key loaded. Run the 'read -s' key step first, or save it to {KEY_FILE}.")
         return
     card = os.environ.get("SANTA_CARD") or find_usb_card()
     if card is None:
