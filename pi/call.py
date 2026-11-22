@@ -13,6 +13,10 @@ GPIO17 pulled LOW (switch contact closed) means OFF THE HOOK = call on.
                letting go hangs up. Same program, no flag.
 A loose wire reads as on the hook either way (fail-safe: no runaway billed calls).
 
+Logging (OBS-04 shape): one JSON line per call and a connectivity check every 5 minutes,
+in ~/santa-logs/YYYY-MM-DD.jsonl, kept 7 days. Numbers only: duration, turns, latency,
+tokens, estimated cost, errors. Never audio, never words. Read them with: python3 calls.py
+
 Usage:
   python3 call.py                 wait for the hook switch (Ctrl+C to quit)
   python3 call.py --now           start one call right away, no switch (Ctrl+C hangs up)
@@ -33,7 +37,9 @@ import re
 import subprocess
 import sys
 import time
+import uuid
 from array import array
+from datetime import datetime, timedelta
 
 try:
     import websockets
@@ -60,6 +66,18 @@ HOOK_PIN = 17
 
 # Saved key (owner-only file, chmod 600). Used when OPENAI_API_KEY isn't set.
 KEY_FILE = os.path.expanduser("~/.santa_key")
+
+LOG_DIR = os.path.expanduser("~/santa-logs")
+LOG_KEEP_DAYS = 7                 # OBS-04: rotate daily, keep 7 days
+HEALTH_EVERY = 5 * 60             # connectivity check while idle, seconds
+VAD_SILENCE_S = 0.7               # server waits this long after the child stops before replying
+
+# USD per 1M tokens for gpt-realtime, from OpenAI's model page (checked 2026-11-21).
+# Cost in the logs is an ESTIMATE from these; the OpenAI usage dashboard is the real bill.
+PRICES = {
+    "text_in": 4.00, "text_in_cached": 0.40, "text_out": 16.00,
+    "audio_in": 32.00, "audio_in_cached": 0.40, "audio_out": 64.00,
+}
 
 # --- Santa's brain (copied from poc/server.py, 2026-11-21) -------------------
 SANTA_INSTRUCTIONS = """You are Santa Claus, talking to a child on a magical telephone that reaches the North Pole.
@@ -165,6 +183,81 @@ def boost(pcm, gain):
     return array("h", (max(-32768, min(32767, int(s * gain))) for s in samples)).tobytes()
 
 
+# --- logging ----------------------------------------------------------------
+def log_record(record):
+    """Append one JSON line to today's log file and drop files older than LOG_KEEP_DAYS."""
+    try:
+        os.makedirs(LOG_DIR, exist_ok=True)
+        now = datetime.now()
+        record = {"time": now.isoformat(timespec="seconds"), **record}
+        with open(os.path.join(LOG_DIR, now.strftime("%Y-%m-%d") + ".jsonl"), "a") as f:
+            f.write(json.dumps(record) + "\n")
+        oldest = (now - timedelta(days=LOG_KEEP_DAYS)).strftime("%Y-%m-%d")
+        for name in os.listdir(LOG_DIR):
+            if name.endswith(".jsonl") and name[:10] < oldest:
+                os.remove(os.path.join(LOG_DIR, name))
+    except OSError as e:  # a full or read-only card must never stop a call
+        say(f"(could not write log: {e})")
+
+
+def estimate_cost(u):
+    per = PRICES
+    return round((
+        (u["text_in"] - u["text_in_cached"]) * per["text_in"]
+        + u["text_in_cached"] * per["text_in_cached"]
+        + (u["audio_in"] - u["audio_in_cached"]) * per["audio_in"]
+        + u["audio_in_cached"] * per["audio_in_cached"]
+        + u["text_out"] * per["text_out"]
+        + u["audio_out"] * per["audio_out"]
+    ) / 1_000_000, 4)
+
+
+def wifi_signal_dbm():
+    try:
+        with open("/proc/net/wireless") as f:
+            for line in f:
+                if line.strip().startswith("wlan0:"):
+                    return float(line.split()[3].rstrip("."))
+    except (OSError, IndexError, ValueError):
+        pass
+    return None
+
+
+def cpu_temp_c():
+    try:
+        with open("/sys/class/thermal/thermal_zone0/temp") as f:
+            return round(int(f.read()) / 1000, 1)
+    except (OSError, ValueError):
+        return None
+
+
+async def health_check():
+    """Can the Pi reach OpenAI right now, and how is the WiFi? Logged, not printed."""
+    record = {"kind": "health", "wifi_dbm": wifi_signal_dbm(), "cpu_c": cpu_temp_c()}
+    t0 = time.monotonic()
+    try:
+        _, writer = await asyncio.wait_for(asyncio.open_connection("api.openai.com", 443), 5)
+        writer.close()
+        record.update(openai="ok", openai_ms=round((time.monotonic() - t0) * 1000))
+    except asyncio.TimeoutError:
+        record["openai"] = "timeout"
+    except OSError as e:  # includes DNS failure (no internet)
+        record["openai"] = f"down: {type(e).__name__}"
+    log_record(record)
+    if record["openai"] != "ok":
+        say(f"(connectivity check: OpenAI {record['openai']})")
+    return record
+
+
+def classify_connect_error(e):
+    status = getattr(getattr(e, "response", None), "status_code", None) or getattr(e, "status_code", None)
+    if status in (401, 403):
+        return "auth", status
+    if status:
+        return "session", status
+    return "connect", None
+
+
 async def connect(key):
     headers = {"Authorization": f"Bearer {key}"}
     try:  # websockets 14+
@@ -232,6 +325,14 @@ class Call:
         self.last_activity = self.started
         self.hanging_up = None    # end_call reason, once Santa calls it
         self.silence_stage = 0    # 0 none, 1 asked "still there?", 2 told "gone quiet"
+        # stats for the log (numbers only)
+        self.child_turns = 0
+        self.responses = 0
+        self.first_audio_s = None   # pickup -> Santa's first sound
+        self.speech_stopped_at = None
+        self.turn_latencies = []    # child stops talking -> Santa's first sound, seconds
+        self.errors = []
+        self.usage = {k: 0 for k in PRICES}
 
     def elapsed(self):
         return time.monotonic() - self.started
@@ -254,6 +355,19 @@ class Call:
         await self.send({"type": "response.create"})
         self.last_activity = time.monotonic()
 
+    def add_usage(self, usage):
+        if not usage:
+            return
+        inp = usage.get("input_token_details") or {}
+        cached = inp.get("cached_tokens_details") or {}
+        out = usage.get("output_token_details") or {}
+        self.usage["text_in"] += inp.get("text_tokens", 0)
+        self.usage["audio_in"] += inp.get("audio_tokens", 0)
+        self.usage["text_in_cached"] += cached.get("text_tokens", 0)
+        self.usage["audio_in_cached"] += cached.get("audio_tokens", 0)
+        self.usage["text_out"] += out.get("text_tokens", 0)
+        self.usage["audio_out"] += out.get("audio_tokens", 0)
+
     async def mic(self):
         proc = await asyncio.create_subprocess_exec(
             "arecord", "-q", "-D", f"plughw:{self.card},0", "-f", "S16_LE", "-r", str(RATE),
@@ -269,7 +383,7 @@ class Call:
                 await self.send({"type": "input_audio_buffer.append",
                                  "audio": base64.b64encode(chunk).decode()})
         except asyncio.IncompleteReadError:
-            return "mic stopped (is the USB adapter still plugged in?)"
+            return "mic_error"
         finally:
             if proc.returncode is None:
                 proc.kill()
@@ -280,13 +394,22 @@ class Call:
             msg = json.loads(raw)
             kind = msg.get("type", "")
             if kind == "response.output_audio.delta":
+                now = time.monotonic()
+                if self.first_audio_s is None:
+                    self.first_audio_s = round(now - self.started, 2)
+                if self.speech_stopped_at is not None:
+                    self.turn_latencies.append(now - self.speech_stopped_at + VAD_SILENCE_S)
+                    self.speech_stopped_at = None
                 self.speaker.play(base64.b64decode(msg["delta"]))
             elif kind == "input_audio_buffer.speech_started":
                 self.last_activity = time.monotonic()
                 self.silence_stage = 0
+                self.child_turns += 1
                 if self.speaker.busy() and not self.half_duplex:
                     await self.speaker.flush()
                 say("(child talking)")
+            elif kind == "input_audio_buffer.speech_stopped":
+                self.speech_stopped_at = time.monotonic()
             elif kind == "response.created":
                 self.last_activity = time.monotonic()
                 say("(Santa talking)")
@@ -296,29 +419,33 @@ class Call:
                 except ValueError:
                     self.hanging_up = "goodbye"
                 say(f"(Santa is saying goodbye: {self.hanging_up})")
-            elif kind == "response.done" and self.hanging_up:
-                # The goodbye text finishes before its audio does: wait for the speaker.
-                deadline = time.monotonic() + 20
-                while self.speaker.busy(tail=0.8) and time.monotonic() < deadline:
-                    await asyncio.sleep(0.1)
-                return f"Santa hung up ({self.hanging_up})"
+            elif kind == "response.done":
+                self.responses += 1
+                self.add_usage((msg.get("response") or {}).get("usage"))
+                if self.hanging_up:
+                    # The goodbye text finishes before its audio does: wait for the speaker.
+                    deadline = time.monotonic() + 20
+                    while self.speaker.busy(tail=0.8) and time.monotonic() < deadline:
+                        await asyncio.sleep(0.1)
+                    return f"santa_{self.hanging_up}"
             elif kind == "error":
                 err = msg.get("error", {})
+                self.errors.append(err.get("code") or err.get("type") or "unknown")
                 say(f"API error: {err.get('type', '?')}: {err.get('message', '')}")
-        return "connection closed by OpenAI"
+        return "dropped"
 
     async def clock(self):
         wrapped = False
         while True:
             await asyncio.sleep(1)
             if self.elapsed() >= MAX_SECONDS:
-                return "time's up (5:00 cap)"
+                return "cap"
             if not wrapped and self.elapsed() >= WRAP_NUDGE_AT:
                 wrapped = True
                 await self.nudge("The call is almost out of time. Begin your goodbye now.")
             quiet = self.quiet_for()
             if quiet >= SILENCE_HARD_STOP:
-                return "no one there (silence)"
+                return "silence"
             if self.silence_stage == 0 and quiet >= SILENCE_CHECK_AT:
                 self.silence_stage = 1
                 await self.nudge("The child has gone quiet.")
@@ -327,22 +454,48 @@ class Call:
                 await self.nudge("The child has gone quiet again.")
 
 
+END_TEXT = {
+    "santa_goodbye": "Santa hung up (goodbye)",
+    "santa_inappropriate": "Santa hung up (inappropriate language)",
+    "santa_no_response": "Santa hung up (no one answering)",
+    "hung_up": "hung up",
+    "cap": "time's up (5:00 cap)",
+    "silence": "no one there (silence)",
+    "dropped": "connection dropped by OpenAI",
+    "mic_error": "mic stopped (is the USB adapter still plugged in?)",
+    "auth": "could not connect: OpenAI rejected the key",
+    "session": "could not connect: OpenAI refused the session",
+    "connect": "could not connect: no internet or OpenAI unreachable",
+    "stopped": "stopped with Ctrl+C",
+    "error": "program error",
+}
+
+
 async def watch_hook(on_hook):
     while not on_hook():
         await asyncio.sleep(0.05)
-    return "hung up"
+    return "hung_up"
 
 
 async def run_call(key, card, gain, half_duplex, on_hook=None):
+    """One call, start to finish. Returns a line for the screen; logs one JSON record."""
     speaker = Speaker(card)
     await speaker.start()
     ws = None
+    call = None
     tasks = []
+    record = {"kind": "call", "id": uuid.uuid4().hex[:8], "model": MODEL, "voice": VOICE}
+    end = "stopped"  # if we're cancelled (Ctrl+C) before anything else sets it
+    t0 = time.monotonic()
     try:
         try:
-            ws = await connect(key)
+            ws = await asyncio.wait_for(connect(key), 10)
+            record["connect_ms"] = round((time.monotonic() - t0) * 1000)
         except Exception as e:  # bad key, no internet, etc.
-            return f"could not connect: {type(e).__name__}: {e}"
+            end, status = classify_connect_error(e)
+            record["error_detail"] = f"{type(e).__name__}" + (f" HTTP {status}" if status else "")
+            say(f"({record['error_detail']}: {e})")
+            return END_TEXT[end]
         call = Call(ws, card, speaker, gain, half_duplex)
         await call.send({"type": "session.update", "session": SESSION})
         await call.send({"type": "response.create"})  # Santa speaks first
@@ -352,18 +505,46 @@ async def run_call(key, card, gain, half_duplex, on_hook=None):
         if on_hook:
             tasks.append(asyncio.create_task(watch_hook(on_hook)))
         done, _ = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
-        first = done.pop()
         try:
-            reason = first.result()
+            end = done.pop().result()
+        except websockets.ConnectionClosed:
+            end = "dropped"
         except Exception as e:
-            reason = f"error: {type(e).__name__}: {e}"
-        return f"{reason}  [call length {call.elapsed():.0f}s]"
+            end = "error"
+            record["error_detail"] = f"{type(e).__name__}: {e}"
+        return f"{END_TEXT.get(end, end)}  [call length {call.elapsed():.0f}s]"
     finally:
         for t in tasks:
             t.cancel()
         if ws is not None:
-            await ws.close()
+            try:
+                await ws.close()
+            except Exception:
+                pass
         await speaker.stop()
+        record["end"] = end
+        if call is not None:
+            lat = sorted(call.turn_latencies)
+            record.update(
+                seconds=round(call.elapsed(), 1),
+                child_turns=call.child_turns,
+                responses=call.responses,
+                first_audio_s=call.first_audio_s,
+                turn_latency_avg_s=round(sum(lat) / len(lat), 2) if lat else None,
+                turn_latency_max_s=round(lat[-1], 2) if lat else None,
+                api_errors=call.errors,
+                tokens=call.usage,
+                cost_usd=estimate_cost(call.usage),
+            )
+        else:
+            record.update(seconds=0, cost_usd=0)
+        log_record(record)
+
+
+async def health_loop():
+    while True:
+        await health_check()
+        await asyncio.sleep(HEALTH_EVERY)
 
 
 async def main():
@@ -387,10 +568,13 @@ async def main():
         return
     say(f"USB audio card {card}, model {MODEL}, voice {VOICE}, mic gain {args.gain}"
         + (", half-duplex" if args.half_duplex else ""))
+    log_record({"kind": "start", "model": MODEL, "voice": VOICE, "card": card})
+    health = asyncio.create_task(health_loop())
 
     if args.now:
         say("Calling Santa now. Ctrl+C hangs up.")
         say(f"Call ended: {await run_call(key, card, args.gain, args.half_duplex)}")
+        health.cancel()
         return
 
     try:

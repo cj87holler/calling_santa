@@ -194,6 +194,14 @@ Santa talking within ~1s → child/Santa turns ×2 → Santa said goodbye + end_
 finished (43s call) → waited for the lever release → re-armed. Full duplex with the speaker; no self-interruption
 in the log. Key now saved on the Pi in `~/.santa_key` (owner-only); `call.py` reads it when OPENAI_API_KEY is unset.
 Before the yard install: make a separate Pi-only key so it can be revoked alone (the SD card is physically exposed).
+**Logging added 2026-11-21 (OBS-04 shape, not yet run on the Pi):** `call.py` writes one JSON line per call
+(end reason, seconds, turns, first-audio and turn latency, API errors, token counts, estimated cost) plus a
+connectivity check every 5 min (OpenAI TCP reachability + ms, WiFi dBm, CPU °C) to `~/santa-logs/YYYY-MM-DD.jsonl`,
+kept 7 days. No audio, no words. `pi/calls.py` prints the report (today / 7 days / connectivity / per call;
+`--live` checks reachability now). Cost uses gpt-realtime prices checked 2026-11-21 ($32/$64 audio in/out,
+$4/$16 text, $0.40 cached per 1M); the OpenAI usage dashboard is the real bill. **Prometheus + Grafana (OBS-01/02)
+deferred:** too heavy for a 1GB Pi 3 and the Dec 1 timeline; the JSONL fields map onto the Metric Contract so an
+exporter can be added later (or Grafana Cloud with the Pi pushing out, needing no DNS or open ports).
 Next (updated 11-21): sound/latency feedback; systemd start-on-boot (so no ssh session is needed); cradle (red → NC).
 Old next-session list, now done through step 3: (1) owner plugs a small powered speaker into the adapter's green out jack; (2) `ssh cj@santa.local`,
 load key with `read -s`; (3) `python3 call.py`, hold the lever down, talk, let go; (4) tune: `--half-duplex` if Santa
