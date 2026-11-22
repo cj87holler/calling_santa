@@ -72,6 +72,9 @@ HOOK_PIN = 17
 KEY_FILE = os.path.expanduser("~/.santa_key")
 
 SOUNDS_DIR = os.path.expanduser("~/sounds")  # pickup.wav / hangup.wav: 24 kHz mono 16-bit
+# Santa waits this long after pickup before he starts talking, so the jingle gets its moment.
+# He then answers ~0.5-1 s later, while the 6 s clip is fading out. Override: SANTA_JINGLE_S=4.5
+JINGLE_MIN_S = float(os.environ.get("SANTA_JINGLE_S", "3.5"))
 JINGLE_FADE_S = 0.4               # how fast the pickup jingle fades when Santa starts talking
 
 LOG_DIR = os.path.expanduser("~/santa-logs")
@@ -561,6 +564,10 @@ async def run_call(key, card, gain, half_duplex, on_hook=None, sounds=None):
             return END_TEXT[end]
         call = Call(ws, card, speaker, gain, half_duplex)
         await call.send({"type": "session.update", "session": SESSION})
+        if sounds and sounds.get("pickup"):
+            wait = JINGLE_MIN_S - (time.monotonic() - t0)
+            if wait > 0:
+                await asyncio.sleep(wait)  # let the jingle play before Santa answers
         await call.send({"type": "response.create"})  # Santa speaks first
         tasks = [asyncio.create_task(call.mic()),
                  asyncio.create_task(call.receive()),
