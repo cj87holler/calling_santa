@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Paused 2026-11-21. Hook switch PROVEN on GPIO17 (bench wiring, red on NO; pi/hooktest.py clean, no bounce). pi/call.py written (hook-triggered Realtime WebSocket call, card 2 in/out, 3x mic gain) but NOT yet run: owner is getting a small speaker for the adapter output. Next: first two-way call with python3 call.py."
+stopped_at: "2026-11-21: FIRST PI CALL WORKED. Lever press -> call.py opened Realtime over WebSocket, Santa greeted in ~1s, two child turns, Santa said goodbye and called end_call, hung up at 43s, re-armed after the lever was released. Full duplex, no self-interruption seen. Key saved in ~/.santa_key (chmod 600). Next: owner feedback on sound/latency, then systemd start-on-boot, then the cradle (red -> NC)."
 last_updated: "2026-09-02T02:04:26.532Z"
 last_activity: 2026-11-21
 progress:
@@ -189,7 +189,13 @@ Stopped at: **Hook switch proven; call program written but not yet run (no speak
   powered speaker in the green jack (`speaker-test -D plughw:1,0 -c 2 -t wav -l 1`). **The USB card number shuffles
   between boots** (card 2 on 11-19, card 1 on 11-21; card 2 was HDMI, which gives "error 524" with no TV). Always
   check with `aplay -l | grep -i usb`; `call.py` finds the adapter by name, and `SANTA_CARD=N` overrides.
-Next session: (1) owner plugs a small powered speaker into the adapter's green out jack; (2) `ssh cj@santa.local`,
+**FIRST TWO-WAY PI CALL WORKED (2026-11-21 20:44).** Bench switch press → "Off the hook: calling Santa." →
+Santa talking within ~1s → child/Santa turns ×2 → Santa said goodbye + end_call → hung up after his audio
+finished (43s call) → waited for the lever release → re-armed. Full duplex with the speaker; no self-interruption
+in the log. Key now saved on the Pi in `~/.santa_key` (owner-only); `call.py` reads it when OPENAI_API_KEY is unset.
+Before the yard install: make a separate Pi-only key so it can be revoked alone (the SD card is physically exposed).
+Next (updated 11-21): sound/latency feedback; systemd start-on-boot (so no ssh session is needed); cradle (red → NC).
+Old next-session list, now done through step 3: (1) owner plugs a small powered speaker into the adapter's green out jack; (2) `ssh cj@santa.local`,
 load key with `read -s`; (3) `python3 call.py`, hold the lever down, talk, let go; (4) tune: `--half-duplex` if Santa
 interrupts himself (echo), `--gain` if he can't hear; (5) then systemd start-on-boot, then the cradle (red → NC).
 Lessons: ship scripts with `scp`, run in a Mac terminal from `~/Desktop/calling_santa/pi` with short commands
