@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "2026-11-21: FIRST PI CALL WORKED. Lever press -> call.py opened Realtime over WebSocket, Santa greeted in ~1s, two child turns, Santa said goodbye and called end_call, hung up at 43s, re-armed after the lever was released. Full duplex, no self-interruption seen. Key saved in ~/.santa_key (chmod 600). Next: owner feedback on sound/latency, then systemd start-on-boot, then the cradle (red -> NC)."
+stopped_at: "Paused 2026-11-21 night. Pi path PROVEN END TO END on the bench: lever -> jingle -> Santa (Realtime WebSocket) -> goodbye/hang-up -> sparkle, with per-call JSON logs + cost estimate (calls.py). Owner building the phone + cradle hardware next. Next session: systemd start-on-boot for call.py."
 last_updated: "2026-09-02T02:04:26.532Z"
 last_activity: 2026-11-21
 progress:
@@ -172,7 +172,7 @@ plus Pi transport choice — WebRTC vs WebSocket — forced in Phase 2.
 
 ## Session Continuity
 
-Last session: 2026-11-21
+Last session: 2026-11-21 (night)
 Stopped at: **Hook switch proven; call program written but not yet run (no speaker).**
 - **Switch wiring as built:** green dupont → Pi pin 9 (GND, 5th pin in on the odd row) → switch COM screw.
   Red dupont → Pi pin 11 (GPIO17, 6th pin in) → switch **NO** screw for the bench test (press lever = off the hook
@@ -205,6 +205,19 @@ kept 7 days. No audio, no words. `pi/calls.py` prints the report (today / 7 days
 $4/$16 text, $0.40 cached per 1M); the OpenAI usage dashboard is the real bill. **Prometheus + Grafana (OBS-01/02)
 deferred:** too heavy for a 1GB Pi 3 and the Dec 1 timeline; the JSONL fields map onto the Metric Contract so an
 exporter can be added later (or Grafana Cloud with the Pi pushing out, needing no DNS or open ports).
+**Sounds added 2026-11-21 (owner approved by ear):** POC `pickup.mp3`/`hangup.mp3` trimmed to the POC clips
+(6s/7s, same fades, 60% volume) as 24 kHz mono WAV in `pi/sounds/` → Pi `~/sounds/`. Jingle starts on pickup,
+mic muted while it plays, Santa's greeting held until **3.5s** after pickup (`JINGLE_MIN_S`, env `SANTA_JINGLE_S`),
+jingle fades on his first audio. Sparkle after every call, cut by a new pickup. Owner: "outro was great", intro
+good at 3.5s.
+**Files on the Pi (home dir `~`):** `call.py`, `calls.py`, `hooktest.py`, `soundcheck.sh`, `say.sh`,
+`sounds/pickup.wav`, `sounds/hangup.wav`, `.santa_key` (chmod 600), logs in `santa-logs/`. All copied by scp from
+`pi/` in the repo; the repo is the source of truth.
+**NEXT SESSION: systemd start-on-boot.** A `santa.service` running `python3 /home/cj/call.py` as user `cj`,
+`Restart=always`, after `network-online.target`; key from `~/.santa_key` (already supported); stdout to journald
+(`journalctl -u santa -f`); confirm the USB card is found after a cold boot (number shuffles; found by name) and
+that GPIO works for a non-root user (cj is in the gpio group by default on Pi OS). Then: cradle (red → NC), yard
+WiFi test with `calls.py --live`, separate Pi-only API key before the yard install.
 Next (updated 11-21): sound/latency feedback; systemd start-on-boot (so no ssh session is needed); cradle (red → NC).
 Old next-session list, now done through step 3: (1) owner plugs a small powered speaker into the adapter's green out jack; (2) `ssh cj@santa.local`,
 load key with `read -s`; (3) `python3 call.py`, hold the lever down, talk, let go; (4) tune: `--half-duplex` if Santa
