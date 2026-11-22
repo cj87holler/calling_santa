@@ -194,7 +194,10 @@ Santa talking within ~1s → child/Santa turns ×2 → Santa said goodbye + end_
 finished (43s call) → waited for the lever release → re-armed. Full duplex with the speaker; no self-interruption
 in the log. Key now saved on the Pi in `~/.santa_key` (owner-only); `call.py` reads it when OPENAI_API_KEY is unset.
 Before the yard install: make a separate Pi-only key so it can be revoked alone (the SD card is physically exposed).
-**Logging added 2026-11-21 (OBS-04 shape, not yet run on the Pi):** `call.py` writes one JSON line per call
+**Logging proven on the Pi 2026-11-21 21:04:** first logged call 55s, 3 child turns, avg reply 1.1s (under the
+2s SESS-03 target), est. cost $0.075, ended hung_up; health check OpenAI ok 36 ms, WiFi -32 dBm (indoors, near the
+router; the yard will be weaker), CPU 45°C. Rough cost: ~$0.08/min of talk. Still to do: compare the estimate
+against the OpenAI usage dashboard. **Logging added 2026-11-21 (OBS-04 shape):** `call.py` writes one JSON line per call
 (end reason, seconds, turns, first-audio and turn latency, API errors, token counts, estimated cost) plus a
 connectivity check every 5 min (OpenAI TCP reachability + ms, WiFi dBm, CPU °C) to `~/santa-logs/YYYY-MM-DD.jsonl`,
 kept 7 days. No audio, no words. `pi/calls.py` prints the report (today / 7 days / connectivity / per call;
