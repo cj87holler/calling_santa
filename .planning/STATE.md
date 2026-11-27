@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Paused 2026-11-22. FULL CALL WORKS WITH THE REAL CRADLE: handset on cradle (switch on NC) = idle, lift = jingle + Santa, hang up = sparkle; owner: worked pretty well. pi/santa.service written, NOT yet installed. Next session: install santa.service (start-on-boot), cold-boot test, then yard WiFi test and a Pi-only API key."
+stopped_at: "Paused 2026-11-26. SD card died after rewiring (LED 8/3-blink boot codes; loose COM wire + hard power pulls); re-flashed (password SSH), Santa reinstalled, OpenAI key OK. First hook switch defective (NC open at rest), replaced. Echo on fresh card fixed with --half-duplex in santa.service. santa.service INSTALLED + running. Next: cold-boot test with new switch, hang-up debounce, card power-loss protection, yard WiFi test, Pi-only API key."
 last_updated: "2026-09-02T02:04:26.532Z"
-last_activity: 2026-11-22
+last_activity: 2026-11-26
 progress:
   total_phases: 7
   completed_phases: 0
